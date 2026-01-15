@@ -1,0 +1,19 @@
+apiVersion: v2
+name: trishul
+description: "Trishul depicting 3 main arms of FCAPS i.e., FM, PM and Logs. Hence here we are having some unique utility tools for FM, PM and Logs."
+type: application
+version: 2.1.6
+appVersion: "2.1.6"
+
+keywords:
+  - trishul
+  - snmp
+  - mib
+  - parser
+  - traps
+  - monitoring
+maintainers:
+  - name: Sumit Dhaka
+home: https://git.rakuten-it.com/projects/FCPSI/repos/trishul/
+sources:
+  - https://git.rakuten-it.com/projects/FCPSI/repos/trishul/

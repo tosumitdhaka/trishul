@@ -1,0 +1,137 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trishul.fullname" . }}-backend
+  labels:
+    {{- include "trishul.backend.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicas.backend }}
+  selector:
+    matchLabels:
+      {{- include "trishul.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: backend
+  template:
+    metadata:
+      labels:
+        {{- include "trishul.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: backend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/api/v1/metrics"
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-config.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.hostNetwork }}
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
+      initContainers:
+      - name: wait-for-mysql
+        image: busybox:1.35
+        command:
+        - sh
+        - -c
+        - |
+          until nc -z {{ include "trishul.fullname" . }}-mysql {{ .Values.service.mysql.port }}; do
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
+          echo "MySQL is ready!"
+      containers:
+      - name: backend
+        image: {{ include "trishul.backend.image" . }}
+        imagePullPolicy: {{ .Values.image.backend.pullPolicy }}
+        env:
+        - name: MONITORING_ENABLED
+          value: {{ .Values.monitoring.enabled | quote }}
+        - name: PROMETHEUS_SERVICE
+          value: "{{ include "trishul.fullname" . }}-prometheus:9090"
+        - name: DB_HOST
+          value: {{ include "trishul.fullname" . }}-mysql
+        - name: DB_PORT
+          value: {{ .Values.service.mysql.port | quote }}
+        - name: DB_USER
+          value: root
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "trishul.fullname" . }}-mysql
+              key: mysql-root-password
+        - name: DATA_DIR
+          value: /app/data
+        - name: COMPILED_DIR
+          value: /app/data/compiled_mibs
+        - name: CACHE_DIR
+          value: /app/data/cache
+        - name: EXPORT_DIR
+          value: /app/data/exports
+        - name: UPLOAD_DIR
+          value: /app/data/uploads
+        - name: LOG_FILE
+          value: /app/data/logs/trishul.log
+        - name: WEB_HOST
+          value: {{ .Values.config.web.host }}
+        - name: WEB_PORT
+          value: {{ .Values.config.web.port | quote }}
+        - name: LOG_LEVEL
+          value: {{ .Values.config.logging.level }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.config.web.port }}
+          protocol: TCP
+        - name: trap-receiver
+          containerPort: {{ .Values.service.backend.trapPort }}
+          protocol: UDP
+        livenessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: http
+          initialDelaySeconds: 40
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: http
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        resources:
+          {{- toYaml .Values.resources.backend | nindent 10 }}
+        volumeMounts:
+        - name: backend-data
+          mountPath: /app/data
+        - name: config
+          mountPath: /app/config/config.yaml
+          subPath: config.yaml
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "trishul.fullname" . }}-config
+      {{- if .Values.persistence.backend.enabled }}
+      - name: backend-data
+        persistentVolumeClaim:
+          claimName: {{ include "trishul.fullname" . }}-backend-data
+      {{- else }}
+      - name: backend-data
+        emptyDir: {}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

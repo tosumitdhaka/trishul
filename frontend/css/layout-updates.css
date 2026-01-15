@@ -1,0 +1,157 @@
+/* ============================================
+   Layout Updates for Sidebar
+   ============================================ */
+
+/* Remove old navigation styles */
+.app-nav {
+    display: none; /* Hide old horizontal nav */
+}
+
+/* View Container Adjustments */
+.view-container {
+    padding: var(--spacing-xl);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Responsive padding */
+@media (max-width: 768px) {
+    .view-container {
+        padding: var(--spacing-lg);
+    }
+}
+
+/* Smooth view transitions */
+.view {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.view.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header adjustments for sidebar layout */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.icon-btn {
+    padding: var(--spacing-sm);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    background: var(--color-hover);
+    border-color: var(--color-primary);
+}
+
+.icon-btn .icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Health status */
+.health-status {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    transition: background 0.2s ease;
+}
+
+.health-status:hover {
+    background: var(--color-hover);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-success);
+    animation: pulse 2s infinite;
+}
+
+.status-dot.warning {
+    background: var(--color-warning);
+}
+
+.status-dot.error {
+    background: var(--color-danger);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+
+/* ============================================
+   Layout Fixes
+   ============================================ */
+
+/* Reset body */
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Remove old nav */
+.app-nav {
+    display: none !important;
+}
+
+/* Ensure views don't have conflicting positioning */
+.view {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Fix view container */
+.view-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* Ensure content is scrollable */
+.app-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Fix for any absolute positioned elements */
+.app-container * {
+    box-sizing: border-box;
+}

@@ -1,0 +1,427 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisLabel": "% of Limit",
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never"
+          },
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 80},
+              {"color": "red", "value": 90}
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": ["last", "max"],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {"mode": "multi"}
+      },
+      "targets": [
+        {
+          "expr": "(rate(container_cpu_usage_seconds_total{pod=~\"trishul-.*\", container!=\"\"}[5m]) / on(pod, container) group_left() (kube_pod_container_resource_limits{pod=~\"trishul-.*\", resource=\"cpu\"} > 0)) * 100",
+          "legendFormat": "{{pod}} - {{container}}"
+        }
+      ],
+      "title": "All Pods - CPU Usage (% of limit)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisLabel": "% of Limit",
+            "drawStyle": "line",
+            "fillOpacity": 10
+          },
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 85},
+              {"color": "red", "value": 95}
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": ["last", "max"],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {"mode": "multi"}
+      },
+      "targets": [
+        {
+          "expr": "(container_memory_usage_bytes{pod=~\"trishul-.*\", container!=\"\"} / on(pod, container) group_left() (kube_pod_container_resource_limits{pod=~\"trishul-.*\", resource=\"memory\"} > 0)) * 100",
+          "legendFormat": "{{pod}} - {{container}}"
+        }
+      ],
+      "title": "All Pods - Memory Usage (% of limit)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisLabel": "Cores",
+            "drawStyle": "line",
+            "fillOpacity": 10
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": ["last", "max"],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {"mode": "multi"}
+      },
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{pod=~\"trishul-.*\", container!=\"\"}[5m])",
+          "legendFormat": "{{pod}} - {{container}}"
+        }
+      ],
+      "title": "All Pods - CPU Usage (cores)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisLabel": "Memory (MB)",
+            "drawStyle": "line",
+            "fillOpacity": 10
+          },
+          "unit": "decmbytes"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": ["last", "max"],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {"mode": "multi"}
+      },
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{pod=~\"trishul-.*\", container!=\"\"} / 1024 / 1024",
+          "legendFormat": "{{pod}} - {{container}}"
+        }
+      ],
+      "title": "All Pods - Memory Usage (MB)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisLabel": "Cores",
+            "drawStyle": "line",
+            "fillOpacity": 10
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": ["last", "max"],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {"mode": "multi"}
+      },
+      "targets": [
+        {
+          "expr": "app_resource_cpu_current_percent / 100",
+          "legendFormat": "Backend App - Current Cores"
+        },
+        {
+          "expr": "app_resource_cpu_max_percent / 100",
+          "legendFormat": "Backend App - Max Cores (lifetime)"
+        }
+      ],
+      "title": "Backend App - CPU Usage (cores)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisLabel": "% of Pod Limit",
+            "drawStyle": "line",
+            "fillOpacity": 10
+          },
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 80},
+              {"color": "red", "value": 90}
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": ["last", "max"],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {"mode": "multi"}
+      },
+      "targets": [
+        {
+          "expr": "((app_resource_cpu_current_percent / 100) / on() group_left() kube_pod_container_resource_limits{pod=~\"trishul-backend.*\", container=\"backend\", resource=\"cpu\"}) * 100",
+          "legendFormat": "Backend App - Current % of Limit"
+        },
+        {
+          "expr": "((app_resource_cpu_max_percent / 100) / on() group_left() kube_pod_container_resource_limits{pod=~\"trishul-backend.*\", container=\"backend\", resource=\"cpu\"}) * 100",
+          "legendFormat": "Backend App - Max % of Limit (lifetime)"
+        }
+      ],
+      "title": "Backend App - CPU (% of pod limit)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisLabel": "Memory (MB)",
+            "drawStyle": "line",
+            "fillOpacity": 10
+          },
+          "unit": "decmbytes"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": ["last", "max"],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {"mode": "multi"}
+      },
+      "targets": [
+        {
+          "expr": "app_resource_memory_current_mb",
+          "legendFormat": "Backend App - Current MB"
+        },
+        {
+          "expr": "app_resource_memory_max_mb",
+          "legendFormat": "Backend App - Max MB (lifetime)"
+        }
+      ],
+      "title": "Backend App - Memory Usage (MB)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisLabel": "% of Pod Limit",
+            "drawStyle": "line",
+            "fillOpacity": 10
+          },
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 85},
+              {"color": "red", "value": 95}
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": ["last", "max"],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {"mode": "multi"}
+      },
+      "targets": [
+        {
+          "expr": "(((app_resource_memory_current_mb * 1024 * 1024) / on() group_left() kube_pod_container_resource_limits{pod=~\"trishul-backend.*\", container=\"backend\", resource=\"memory\"}) * 100)",
+          "legendFormat": "Backend App - Current % of Limit"
+        },
+        {
+          "expr": "(((app_resource_memory_max_mb * 1024 * 1024) / on() group_left() kube_pod_container_resource_limits{pod=~\"trishul-backend.*\", container=\"backend\", resource=\"memory\"}) * 100)",
+          "legendFormat": "Backend App - Max % of Limit (lifetime)"
+        }
+      ],
+      "title": "Backend App - Memory (% of pod limit)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisLabel": "Restarts",
+            "drawStyle": "line",
+            "fillOpacity": 10
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 32},
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": ["last"],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {"mode": "multi"}
+      },
+      "targets": [
+        {
+          "expr": "kube_pod_container_status_restarts_total{pod=~\"trishul-.*\"}",
+          "legendFormat": "{{pod}} - {{container}}"
+        }
+      ],
+      "title": "Pod Restart Count",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{"color": "green", "value": null}]
+          }
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 32},
+      "id": 10,
+      "options": {
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "expr": "kube_pod_container_resource_limits{pod=~\"trishul-.*\", resource=\"cpu\"}",
+          "format": "table",
+          "instant": true,
+          "legendFormat": ""
+        },
+        {
+          "expr": "kube_pod_container_resource_limits{pod=~\"trishul-.*\", resource=\"memory\"} / 1024 / 1024 / 1024",
+          "format": "table",
+          "instant": true,
+          "legendFormat": ""
+        }
+      ],
+      "title": "Pod Resource Limits",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "namespace": true,
+              "node": true,
+              "uid": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "pod": "Pod",
+              "container": "Container",
+              "resource": "Resource",
+              "Value": "Limit"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["trishul", "resources"],
+  "time": {"from": "now-1h", "to": "now"},
+  "timezone": "browser",
+  "title": "Trishul - Resources (All Pods)",
+  "uid": "trishul-resources",
+  "version": 3
+}

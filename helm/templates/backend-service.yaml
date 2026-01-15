@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trishul.fullname" . }}-backend
+  labels:
+    {{- include "trishul.backend.labels" . | nindent 4 }}
+  {{- with .Values.service.backend.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.backend.type }}
+  ports:
+  - port: {{ .Values.service.backend.port }}
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    {{- include "trishul.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: backend
+---
+# Separate NodePort service for SNMP trap receiver
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trishul.fullname" . }}-trap-receiver
+  labels:
+    {{- include "trishul.backend.labels" . | nindent 4 }}
+spec:
+  type: NodePort
+  ports:
+  - port: {{ .Values.service.backend.trapPort }}
+    targetPort: trap-receiver
+    protocol: UDP
+    name: trap-receiver
+    {{- if .Values.service.backend.trapNodePort }}
+    nodePort: {{ .Values.service.backend.trapNodePort }}
+    {{- end }}
+  selector:
+    {{- include "trishul.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: backend

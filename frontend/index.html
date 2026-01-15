@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <meta name="description" content="Network Management Tools">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/sidebar.css">        <!-- NEW -->
+    <link rel="stylesheet" href="/css/dashboard.css">      <!-- NEW -->
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/layout-updates.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/data-table.css">
+    <link rel="stylesheet" href="/css/notification-center.css">
+    <link rel="stylesheet" href="/css/parser.css">
+    <link rel="stylesheet" href="/css/jobs.css">
+    <link rel="stylesheet" href="/css/database.css">
+    <link rel="stylesheet" href="/css/settings.css">
+    <link rel="stylesheet" href="/css/export.css">
+    <link rel="stylesheet" href="/css/protobuf.css">
+    <link rel="stylesheet" href="/css/traps.css">
+    <link rel="stylesheet" href="/css/snmp-walk.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/trident-emblem_o.svg">
+
+</head>
+<body>
+    <!-- App Container -->
+    <div id="app" class="app-container">
+        
+        <!-- Sidebar -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <img src="/assets/icons/trident-emblem_o.svg" class="sidebar-logo" alt="App Logo" id="sidebarLogo">
+                <span class="sidebar-title" id="sidebarTitle">Loading...</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <!-- Dashboard -->
+                <a href="#" class="sidebar-item active" data-view="dashboard" data-tooltip="Dashboard">
+                    <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    <span class="sidebar-text">Dashboard</span>
+                </a>
+
+                <!-- FM Tools Category -->
+                <div class="sidebar-category">
+                    <div class="sidebar-category-header" data-tooltip="TrapMaster">
+                        <span class="sidebar-category-title">Trap Master</span>
+                    </div>
+                    
+                    <a href="#" class="sidebar-item sidebar-child" data-view="parser" data-tooltip="Parser">
+                        <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        <span class="sidebar-text">Parser</span>
+                    </a>
+
+                    <a href="#" class="sidebar-item sidebar-child" data-view="database" data-tooltip="Database">
+                        <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                        </svg>
+                        <span class="sidebar-text">Database</span>
+                    </a>
+
+                    <a href="#" class="sidebar-item sidebar-child" data-view="jobs" data-tooltip="Jobs">
+                        <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                            <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
+                        </svg>
+                        <span class="sidebar-text">Jobs</span>
+                    </a>
+
+                    <!-- Traps with sub-items -->
+                    <div class="sidebar-parent-item">
+                        <a href="#" class="sidebar-item sidebar-child sidebar-item-expandable" data-view="traps" data-tooltip="Traps">
+                            <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                            <span class="sidebar-text">SNMP Traps</span>
+                            <svg class="sidebar-expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </a>
+                        <div class="sidebar-submenu">
+                            <a href="#" class="sidebar-subitem" data-view="traps" data-tab="sender" data-tooltip="Sender">
+                                <span class="sidebar-text">Sender</span>
+                            </a>
+                            <a href="#" class="sidebar-subitem" data-view="traps" data-tab="receiver" data-tooltip="Receiver">
+                                <span class="sidebar-text">Receiver</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PM Tools Category -->
+                <div class="sidebar-category">
+                    <div class="sidebar-category-header" data-tooltip="Metrics Master">
+                        <span class="sidebar-category-title">Metrics Master</span>
+                    </div>
+
+                    <a href="#" class="sidebar-item sidebar-child" data-view="snmp-walk" data-tooltip="SNMP Walk">
+                        <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                        <span class="sidebar-text">SNMP Walk</span>
+                    </a>
+                    
+                    <a href="#" class="sidebar-item sidebar-child" data-view="protobuf" data-tooltip="Protobuf">
+                        <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"/>
+                            <rect x="9" y="9" width="6" height="6"/>
+                            <line x1="9" y1="1" x2="9" y2="4"/>
+                            <line x1="15" y1="1" x2="15" y2="4"/>
+                            <line x1="9" y1="20" x2="9" y2="23"/>
+                            <line x1="15" y1="20" x2="15" y2="23"/>
+                            <line x1="20" y1="9" x2="23" y2="9"/>
+                            <line x1="20" y1="14" x2="23" y2="14"/>
+                            <line x1="1" y1="9" x2="4" y2="9"/>
+                            <line x1="1" y1="14" x2="4" y2="14"/>
+                        </svg>
+                        <span class="sidebar-text">Protobuf</span>
+                    </a>
+                </div>
+
+                <!-- System Category -->
+                <div class="sidebar-category">
+                    <div class="sidebar-category-header" data-tooltip="System">
+                        <span class="sidebar-category-title">System</span>
+                    </div>
+                    
+                    <a href="#" class="sidebar-item sidebar-child" data-view="settings" data-tooltip="Settings">
+                        <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+                        </svg>
+                        <span class="sidebar-text">Settings</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <button class="sidebar-toggle" id="sidebarToggle" title="Collapse sidebar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    <span class="sidebar-toggle-text">Collapse</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="app-main">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-left">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <line x1="3" y1="12" x2="21" y2="12"/>
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <line x1="3" y1="18" x2="21" y2="18"/>
+                        </svg>
+                    </button>
+                    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                </div>
+                
+                <div class="header-right">
+                    <!-- Notification Center will be inserted here -->
+                    
+                    <!-- Health Status -->
+                    <div class="health-status" id="healthStatus" title="System Status">
+                        <span class="status-dot"></span>
+                    </div>
+                    
+                    <!-- Theme Toggle -->
+                    <button class="icon-btn" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="app-content">
+                
+                <!-- ============================================
+                     Dashboard View (NEW)
+                     ============================================ -->
+                <div id="dashboardView" class="view active">
+                    <div class="view-container">
+                        <!-- Dashboard content will be rendered by dashboard.js -->
+                        <div id="dashboardContent"></div>
+                    </div>
+                </div>
+
+            <!-- ============================================
+                 Parser View
+                 ============================================ -->
+            <div id="parserView" class="view active">
+                <div class="view-container">
+                    
+                    <!-- Upload Section -->
+                    <section class="upload-section">
+                        
+                        <!-- Step 1: Input Type Selection -->
+                        <div class="input-type-selector-large">
+                            <h3 class="selector-title">Select Input Type</h3>
+                            <div class="input-type-grid">
+                                <!-- Files -->
+                                <label class="input-type-card">
+                                    <input type="radio" name="inputType" value="files" checked>
+                                    <div class="type-card-content">
+                                        <svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/>
+                                            <polyline points="13 2 13 9 20 9"/>
+                                        </svg>
+                                        <div class="type-text-content">
+                                            <span class="type-name">Files</span>
+                                            <span class="type-hint">Select individual MIB files</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            
+                                <!-- Directory -->
+                                <label class="input-type-card">
+                                    <input type="radio" name="inputType" value="directory">
+                                    <div class="type-card-content">
+                                        <svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+                                        </svg>
+                                        <div class="type-text-content">
+                                            <span class="type-name">Directory</span>
+                                            <span class="type-hint">Select entire folder</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            
+                                <!-- Archive -->
+                                <label class="input-type-card">
+                                    <input type="radio" name="inputType" value="archive">
+                                    <div class="type-card-content">
+                                        <svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                            <polyline points="7 10 12 15 17 10"/>
+                                            <line x1="12" y1="15" x2="12" y2="3"/>
+                                        </svg>
+                                        <div class="type-text-content">
+                                            <span class="type-name">Archive</span>
+                                            <span class="type-hint">Upload .zip file</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            
+                                <!-- Text Input -->
+                                <label class="input-type-card">
+                                    <input type="radio" name="inputType" value="text">
+                                    <div class="type-card-content">
+                                        <svg class="type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <polyline points="4 7 4 4 20 4 20 7"/>
+                                            <line x1="9" y1="20" x2="15" y2="20"/>
+                                            <line x1="12" y1="4" x2="12" y2="20"/>
+                                        </svg>
+                                        <div class="type-text-content">
+                                            <span class="type-name">Text Input</span>
+                                            <span class="type-hint">Paste MIB content</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: File/Directory Selection -->
+                        <div class="upload-area" id="uploadArea">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m14-7l-5-5m0 0L7 8m5-5v12"/>
+                            </svg>
+                            <p class="upload-text">Drop files here</p>
+                            <p class="upload-hint">Or click to browse</p>
+                            <p class="upload-formats">Supports: .mib, .txt, .my, .zip, directories</p>
+                            <input type="file" id="fileInput" multiple hidden>
+                        </div>
+
+                        <!-- Text Input Area -->
+                        <div id="textInputArea" class="text-input-area" style="display: none;">
+                            <textarea id="mibTextInput" class="form-textarea" rows="10" 
+                                      placeholder="Paste MIB content here..."></textarea>
+                        </div>
+
+                        <!-- Step 3: Selected Files Display -->
+                        <div id="selectedFiles" class="selected-files" style="display: none;"></div>
+
+                        <!-- Step 4: Parse Options Row -->
+                        <div class="parse-options-row">
+                            <div class="parse-option-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="forceCompile">
+                                    <span>Force Compile</span>
+                                </label>
+                            </div>
+                            <div class="parse-option-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="deduplicateOption" checked>
+                                    <span>Deduplicate</span>
+                                </label>
+                            </div>
+                            <div class="parse-option-group">
+                                <label class="select-label-inline">
+                                    <span>Strategy:</span>
+                                    <select id="dedupStrategy" class="form-select-inline">
+                                        <option value="smart">Smart</option>
+                                        <option value="keep_first">Keep First</option>
+                                        <option value="keep_last">Keep Last</option>
+                                        <option value="keep_all_modules">Keep All Modules</option>
+                                        <option value="merge">Merge</option>
+                                        <option value="none">None</option>
+                                    </select>
+                                </label>
+                            </div>
+
+                            <div class="parse-option-group parse-option-grow">
+                                <label class="input-label-inline">
+                                    <span>Job Name:</span>
+                                    <input 
+                                        type="text" 
+                                        id="jobName" 
+                                        class="form-input-inline" 
+                                        placeholder="e.g., Nokia MIBs, Cisco Interfaces"
+                                    >
+                                </label>
+                            </div>
+
+                            <div class="parse-option-group">
+                                <button class="btn btn-primary btn-lg" id="parseBtn" disabled>
+                                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="9 11 12 14 22 4"/>
+                                        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+                                    </svg>
+                                    Parse
+                                </button>
+                            </div>
+                        </div>
+
+                    </section>
+
+                </div>
+            </div>
+
+            <!-- ============================================
+                 Database View
+                 ============================================ -->
+            <div id="databaseView" class="view">
+                <div class="view-container">
+                    
+                    <!-- SQL Query Runner -->
+                    <section class="query-section">
+                        <div class="section-header">
+                            <h2>SQL Query Runner</h2>
+                            <div class="section-actions">
+                                <button class="btn btn-sm" id="toggleQueryBuilder">
+                                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <line x1="9" y1="9" x2="15" y2="9"/>
+                                        <line x1="9" y1="15" x2="15" y2="15"/>
+                                    </svg>
+                                    Query Builder
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Raw SQL Input -->
+                        <div class="query-input-container">
+                            <textarea 
+                                id="sqlQueryInput" 
+                                class="sql-query-textarea" 
+                                placeholder="Enter SQL query... (e.g., SELECT * FROM your_table LIMIT 10)"
+                                rows="2"
+>SELECT * FROM </textarea>
+                            <div class="query-actions">
+                                <button class="btn btn-primary" id="executeQueryBtn">
+                                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polygon points="5 3 19 12 5 21 5 3"/>
+                                    </svg>
+                                    Execute Query
+                                </button>
+                                <button class="btn btn-secondary" id="clearQueryBtn">
+                                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <line x1="18" y1="6" x2="6" y2="18"/>
+                                        <line x1="6" y1="6" x2="18" y2="18"/>
+                                    </svg>
+                                    Clear
+                                </button>
+                                <span class="query-hint">Tip: Press Ctrl+Enter to execute</span>
+                            </div>
+                        </div>
+
+                        <!-- Query Builder -->
+                        <div id="queryBuilderContainer" class="query-builder-container" style="display: none;">
+                            <div class="query-builder-row">
+                                <div class="query-builder-group">
+                                    <label>SELECT</label>
+                                    <input type="text" id="qbSelect" class="form-input" placeholder="*, column1, column2" value="*">
+                                    <small style="color: var(--color-text-tertiary); font-size: 0.75rem;">
+                                        Columns to select (comma-separated)
+                                    </small>
+                                </div>
+                                <div class="query-builder-group">
+                                    <label>FROM</label>
+                                    <select id="qbFrom" class="form-select">
+                                        <option value="">Choose table...</option>
+                                    </select>
+                                    <small style="color: var(--color-text-tertiary); font-size: 0.75rem;">
+                                        Table to query
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="query-builder-row">
+                                <div class="query-builder-group">
+                                    <label>WHERE</label>
+                                    <input type="text" id="qbWhere" class="form-input" placeholder="column = 'value'">
+                                    <small style="color: var(--color-text-tertiary); font-size: 0.75rem;">
+                                        Filter condition (e.g., node_type = 'NotificationType')
+                                    </small>
+                                </div>
+                                <!-- ✅ ADD THIS: ORDER BY FIELD -->
+                                <div class="query-builder-group">
+                                    <label>ORDER BY</label>
+                                    <input type="text" id="qbOrderBy" class="form-input" placeholder="column_name ASC">
+                                    <small style="color: var(--color-text-tertiary); font-size: 0.75rem;">
+                                        Sort order (e.g., notification_name ASC)
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="query-builder-row">
+                                <div class="query-builder-group">
+                                    <label>LIMIT</label>
+                                    <input type="number" id="qbLimit" class="form-input" placeholder="1000" value="1000">
+                                    <small style="color: var(--color-text-tertiary); font-size: 0.75rem;">
+                                        Maximum rows to return
+                                    </small>
+                                </div>
+                                <div class="query-builder-group">
+                                    <!-- Empty space for alignment -->
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                                <button class="btn btn-primary" id="buildQueryBtn">
+                                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M12 5v14M5 12h14"/>
+                                    </svg>
+                                    Build Query
+                                </button>
+                                <button class="btn btn-secondary" id="clearQueryBuilderBtn">
+                                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <line x1="18" y1="6" x2="6" y2="18"/>
+                                        <line x1="6" y1="6" x2="18" y2="18"/>
+                                    </svg>
+                                    Clear Builder
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Query Results -->
+                        <div id="queryResults" class="query-results" style="display: none;"></div>
+                    </section>
+
+                    <!-- Tables Section -->
+                    <section class="tables-section">
+                        <div class="section-header">
+                            <h2>Database Tables</h2>
+                            <div class="section-actions">
+                                <!-- Primary Actions -->
+                                <button class="btn btn-primary" id="importDataBtn">
+                                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                    Import Data
+                                </button>
+                                <button class="btn btn-secondary" id="refreshTablesBtn">
+                                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="23 4 23 10 17 10"/>
+                                        <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+                                    </svg>
+                                    Refresh
+                                </button>
+                                
+                                <!-- ✅ NEW: Sync Actions -->
+                                <button class="btn btn-secondary" id="syncAllTablesBtn">
+                                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="23 4 23 10 17 10"/>
+                                        <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+                                    </svg>
+                                    Sync All
+                                </button>
+                                <button class="btn btn-secondary" id="viewMasterStatsBtn">
+                                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                                    </svg>
+                                    Master Stats
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="tablesList" class="tables-grid"></div>
+                    </section>
+
+                    <!-- Table Data View -->
+                    <section id="tableDataSection" class="table-data-section" style="display: none;">
+                        <div id="databaseDataTable"></div>
+                    </section>
+
+                </div>
+            </div>
+
+            <!-- ============================================
+                 Jobs View
+                 ============================================ -->
+            <div id="jobsView" class="view">
+                <div class="view-container">
+                    <div class="section-header">
+                        <h2>Background Jobs</h2>
+                        <div class="section-actions">
+                            <!-- View mode toggle will be inserted here by jobs.js -->
+                            <button class="btn btn-sm" id="clearJobHistoryBtn">
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                                </svg>
+                                Clear History
+                            </button>
+                            <button class="btn btn-sm" id="refreshJobsBtn">
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <polyline points="23 4 23 10 17 10"/>
+                                    <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+                                </svg>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Job Statistics -->
+                    <div id="jobsStats" class="jobs-stats"></div>
+                    
+                    <!-- Jobs List -->
+                    <div id="jobsList" class="jobs-list"></div>
+
+                    <div id="jobDataSection" class="table-data-section" style="display: none;">
+                        <div id="jobDataTableContainer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 SNMP Traps View
+                 ============================================ -->
+            <div id="trapsView" class="view">
+                <div class="view-container">
+
+                    <!-- Content will be rendered by traps.js -->
+                    <div id="trapsContent"></div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                SNMP Walk View
+                ============================================ -->
+            <div id="snmpWalkView" class="view">
+                <div class="view-container">
+                    <div class="view-header">
+                        <h2>SNMP Walk</h2>
+                        <p class="subtitle">Execute SNMP walks and query device OIDs with automatic resolution</p>
+                    </div>
+
+                    <!-- Content will be rendered by snmp-walk.js -->
+                    <div id="snmpWalkContent"></div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 Protobuf Decoder View
+                 ============================================ -->
+            <div id="protobufView" class="view">
+                <div class="view-container">
+                    <div class="view-header">
+                        <h2>Protobuf Decoder</h2>
+                        <p class="subtitle">Upload .proto schema files and decode binary protobuf data</p>
+                    </div>
+
+                    <!-- Content will be rendered by protobuf.js -->
+                    <div id="protobufContent"></div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 Settings View
+                 ============================================ -->
+            <div id="settingsView" class="view">
+                <div class="view-container">
+                    <div id="settingsContent"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p id="loadingText">Processing...</p>
+    </div>
+
+    <!-- Modal Container -->
+    <div id="modalContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <!-- Utilities -->
+    <script src="/js/utils/helpers.js"></script>
+    <script src="/js/utils/notifications.js"></script>
+    <script src="/js/utils/modal.js"></script>
+    <script src="/js/utils/settings-schema.js"></script>
+    
+    <!-- Services -->
+    <script src="/js/services/settings.js"></script>
+    <script src="/js/services/upload.js"></script>
+    <script src="js/services/filter-service.js"></script>
+    <script src="/js/services/export-service.js"></script>
+    <script src="js/services/analyzer-service.js"></script>
+    <script src="/js/api.js"></script>
+    
+    <!-- Components -->
+    <script src="/js/components/notification-center.js"></script>
+    <script src="/js/components/data-table.js"></script>
+    <script src="/js/components/dashboard.js"></script> <!-- NEW -->
+    <script src="/js/components/parser.js"></script>
+    <script src="/js/components/database.js"></script>
+    <script src="/js/components/jobs.js"></script>
+    <script src="/js/components/export.js"></script>
+    <script src="/js/components/protobuf.js"></script>
+    <script src="/js/components/traps.js"></script>
+    <script src="/js/components/snmp-walk.js"></script>
+    <script src="/js/components/settings.js"></script>
+    
+    <!-- Main App -->
+    <script src="/js/app.js"></script>
+</body>
+
+</html>
+
+

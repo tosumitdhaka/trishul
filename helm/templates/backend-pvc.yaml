@@ -1,0 +1,21 @@
+{{- if .Values.persistence.backend.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "trishul.fullname" . }}-backend-data
+  labels:
+    {{- include "trishul.backend.labels" . | nindent 4 }}
+  {{- with .Values.persistence.backend.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+    - {{ .Values.persistence.backend.accessMode }}
+  {{- if .Values.persistence.backend.storageClass }}
+  storageClassName: {{ .Values.persistence.backend.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.backend.size }}
+{{- end }}

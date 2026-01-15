@@ -1,0 +1,125 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "trishul.fullname" . }}-config
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+data:
+  config.yaml: |
+    {{- $configFile := .Files.Get "config/config.yaml" }}
+    {{- if not $configFile }}
+    {{- fail "config/config.yaml file not found in chart" }}
+    {{- end }}
+    {{- $default := $configFile | fromYaml }}
+    {{- $config := .Values.config | default dict }}
+    
+    project:
+      name: {{ $config.project.name | default $default.project.name }}
+      version: "{{ $config.project.version | default $default.project.version }}"
+
+    database:
+      host: {{ include "trishul.fullname" . }}-mysql
+      port: {{ .Values.service.mysql.port }}
+      user: root
+      password_base64: ""
+      parser_db: {{ $config.database.parser_db | default $default.database.parser_db }}
+      jobs_db: {{ $config.database.jobs_db | default $default.database.jobs_db }}
+      system_db: {{ $config.database.system_db | default $default.database.system_db }}
+      traps_db: {{ $config.database.traps_db | default $default.database.traps_db }}
+      pool_size: {{ $config.database.pool_size | default $default.database.pool_size }}
+      max_overflow: {{ $config.database.max_overflow | default $default.database.max_overflow }}
+      pool_timeout: {{ $config.database.pool_timeout | default $default.database.pool_timeout }}
+      pool_recycle: {{ $config.database.pool_recycle | default $default.database.pool_recycle }}
+      pool_pre_ping: {{ $config.database.pool_pre_ping | default $default.database.pool_pre_ping }}
+      echo: {{ $config.database.echo | default $default.database.echo }}
+      max_retries: {{ $config.database.max_retries | default $default.database.max_retries }}
+      retry_delay: {{ $config.database.retry_delay | default $default.database.retry_delay }}
+      batch_insert: {{ $config.database.batch_insert | default $default.database.batch_insert }}
+      import_mode: {{ $config.database.import_mode | default $default.database.import_mode }}
+      batch_size: {{ $config.database.batch_size | default $default.database.batch_size }}
+
+    parser:
+      force_compile: {{ $config.parser.force_compile | default $default.parser.force_compile }}
+      compiled_dir: /app/data/compiled_mibs
+      mib_patterns:
+      {{- range ($config.parser.mib_patterns | default $default.parser.mib_patterns) }}
+      - "{{ . }}"
+      {{- end }}
+      mib_search_dirs:
+      {{- range ($config.parser.mib_search_dirs | default $default.parser.mib_search_dirs) }}
+      - {{ . }}
+      {{- end }}
+      deduplication_enabled: {{ $config.parser.deduplication_enabled | default $default.parser.deduplication_enabled }}
+      deduplication_strategy: {{ $config.parser.deduplication_strategy | default $default.parser.deduplication_strategy }}
+
+    cache:
+      enabled: {{ $config.cache.enabled | default $default.cache.enabled }}
+      directory: /app/data/cache
+      ttl_hours: {{ $config.cache.ttl_hours | default $default.cache.ttl_hours }}
+      max_size_mb: {{ $config.cache.max_size_mb | default $default.cache.max_size_mb }}
+      cleanup_on_startup: {{ $config.cache.cleanup_on_startup | default $default.cache.cleanup_on_startup }}
+
+    jobs:
+      concurrency: {{ $config.jobs.concurrency | default $default.jobs.concurrency }}
+      auto_refresh_interval: {{ $config.jobs.auto_refresh_interval | default $default.jobs.auto_refresh_interval }}
+
+    cleanup:
+      enabled: {{ $config.cleanup.enabled | default $default.cleanup.enabled }}
+      retention_days: {{ $config.cleanup.retention_days | default $default.cleanup.retention_days }}
+      schedule_hour: {{ $config.cleanup.schedule_hour | default $default.cleanup.schedule_hour }}
+      schedule_minute: {{ $config.cleanup.schedule_minute | default $default.cleanup.schedule_minute }}
+      delete_data: {{ $config.cleanup.delete_data | default $default.cleanup.delete_data }}
+      keep_statuses: {{ $config.cleanup.keep_statuses | default $default.cleanup.keep_statuses | toJson }}
+
+    export:
+      export_dir: /app/data/exports
+      chunk_size: {{ $config.export.chunk_size | default $default.export.chunk_size }}
+      include_timestamp: {{ $config.export.include_timestamp | default $default.export.include_timestamp }}
+      timestamp_format: "{{ $config.export.timestamp_format | default $default.export.timestamp_format }}"
+      compression: "{{ $config.export.compression | default $default.export.compression }}"
+
+    upload:
+      upload_dir: /app/data/uploads
+      max_size_mb: {{ $config.upload.max_size_mb | default $default.upload.max_size_mb }}
+      max_archive_size_mb: {{ $config.upload.max_archive_size_mb | default $default.upload.max_archive_size_mb }}
+      max_archive_entries: {{ $config.upload.max_archive_entries | default $default.upload.max_archive_entries }}
+      supported_extensions:
+      {{- range ($config.upload.supported_extensions | default $default.upload.supported_extensions) }}
+      - {{ . }}
+      {{- end }}
+      session_timeout_hours: {{ $config.upload.session_timeout_hours | default $default.upload.session_timeout_hours }}
+
+    metrics:
+      directory: /app/data/metrics
+
+    traps:
+      sync_strategy: {{ $config.traps.sync_strategy | default $default.traps.sync_strategy }}
+      skip_synced: {{ $config.traps.skip_synced | default $default.traps.skip_synced }}
+      batch_size: {{ $config.traps.batch_size | default $default.traps.batch_size }}
+
+    logging:
+      level: {{ $config.logging.level | default $default.logging.level }}
+      file: /app/data/logs/trishul.log
+      console: {{ $config.logging.console | default $default.logging.console }}
+      format: "{{ $config.logging.format | default $default.logging.format }}"
+      max_file_size_mb: {{ $config.logging.max_file_size_mb | default $default.logging.max_file_size_mb }}
+      backup_count: {{ $config.logging.backup_count | default $default.logging.backup_count }}
+
+    web:
+      host: {{ $config.web.host | default $default.web.host }}
+      port: {{ $config.web.port | default $default.web.port }}
+      cors_origins:
+      {{- range ($config.web.cors_origins | default $default.web.cors_origins) }}
+      - "{{ . }}"
+      {{- end }}
+      api_v1_prefix: {{ $config.web.api_v1_prefix | default $default.web.api_v1_prefix }}
+
+    ui:
+      data_table:
+        max_height_px: {{ $config.ui.data_table.max_height_px | default $default.ui.data_table.max_height_px }}
+        default_page_size: {{ $config.ui.data_table.default_page_size | default $default.ui.data_table.default_page_size }}
+        page_size_options: {{ $config.ui.data_table.page_size_options | default $default.ui.data_table.page_size_options | toJson }}
+        db_fetch_limit_default: {{ $config.ui.data_table.db_fetch_limit_default | default $default.ui.data_table.db_fetch_limit_default }}
+        db_fetch_limit_options: {{ $config.ui.data_table.db_fetch_limit_options | default $default.ui.data_table.db_fetch_limit_options | toJson }}
+        priority_columns: {{ $config.ui.data_table.priority_columns | default $default.ui.data_table.priority_columns | toJson }}
+        node_type_options: {{ $config.ui.data_table.node_type_options | default $default.ui.data_table.node_type_options | toJson }}

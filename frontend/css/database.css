@@ -1,0 +1,900 @@
+/* ============================================
+   Database Component Styles - Optimized v2.0
+   ============================================ */
+
+/* Tables Section */
+.tables-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+/* ============================================
+   LIST VIEW
+   ============================================ */
+
+.tables-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.table-list-item {
+    background: var(--color-background);  /* ✅ FIXED: Was white */
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: var(--transition-all);
+    cursor: pointer;
+}
+
+.table-list-item:hover {
+    box-shadow: var(--shadow-sm);  /* ✅ FIXED: Was hardcoded */
+    border-color: var(--color-primary);
+}
+
+/* List Item Header */
+.table-list-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.table-list-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--color-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.table-list-icon svg {
+    width: 24px;
+    height: 24px;
+    color: var(--color-primary);
+    stroke-width: 2;
+}
+
+.table-list-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.table-list-name {
+    font-size: var(--font-size-base);  /* ✅ FIXED: Was 1rem */
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table-list-meta {
+    font-size: var(--font-size-sm);  /* ✅ FIXED: Was 0.8125rem */
+    color: var(--color-text-secondary);
+}
+
+.table-list-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-shrink: 0;
+}
+
+/* List Item Details (Expanded) */
+.table-list-details {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 500px;
+    }
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.detail-label {
+    font-size: var(--font-size-xs);  /* ✅ FIXED: Was 0.75rem */
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: var(--font-size-sm);  /* ✅ FIXED: Was 0.875rem */
+    color: var(--color-text);
+}
+
+.detail-value code {
+    background: var(--color-background);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);  /* ✅ FIXED: Was 0.8125rem */
+}
+
+.table-list-actions-expanded {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+/* ============================================
+   CARD VIEW (Grid)
+   ============================================ */
+
+.tables-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));  /* ✅ FIXED: Was 300px, now 250px for 4 per row */
+    gap: var(--spacing-md);  /* ✅ FIXED: Was var(--spacing-lg) */
+}
+
+.table-card {
+    background: var(--color-background);  /* ✅ FIXED: Was white */
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    transition: var(--transition-all);
+}
+
+.table-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);  /* ✅ FIXED: Was hardcoded */
+    transform: translateY(-2px);
+}
+
+.table-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+    gap: var(--spacing-sm);
+}
+
+.table-card-title {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    margin: 0;
+    font-size: var(--font-size-lg);  /* ✅ FIXED: Was 1.125rem */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.table-card-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
+}
+
+.table-stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.table-stat-label {
+    font-size: var(--font-size-xs);  /* ✅ FIXED: Was 0.75rem */
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table-stat-value {
+    font-size: var(--font-size-lg);  /* ✅ FIXED: Was 1.125rem */
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+}
+
+/* ============================================
+   SECTION HEADER
+   ============================================ */
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.section-header h2 {
+    margin: 0;
+    font-size: var(--font-size-2xl);  /* ✅ FIXED: Was 1.75rem */
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+}
+
+.section-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-xxl);
+    background: var(--color-background);  /* ✅ FIXED: Was white */
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+}
+
+.empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--spacing-lg);
+    color: var(--color-text-tertiary);
+    stroke-width: 1.5;
+}
+
+.empty-message {
+    font-size: var(--font-size-lg);  /* ✅ FIXED: Was 1.125rem */
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-sm) 0;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .tables-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+
+    .detail-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .tables-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .table-list-header {
+        flex-wrap: wrap;
+    }
+
+    .table-list-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .table-list-actions-expanded {
+        flex-direction: column;
+    }
+
+    .table-list-actions-expanded .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .section-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .table-list-meta {
+        font-size: var(--font-size-xs);
+    }
+}
+
+@media (max-width: 480px) {
+    .table-card-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .btn-sm {
+        padding: var(--spacing-xs);
+        font-size: var(--font-size-xs);
+    }
+
+    .btn-icon {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+/* ============================================
+   DARK THEME SUPPORT
+   ============================================ */
+
+[data-theme='dark'] .table-list-item,
+[data-theme='dark'] .table-card,
+[data-theme='dark'] .empty-state {
+    background: var(--color-surface);
+}
+
+[data-theme='dark'] .table-list-details {
+    background: var(--color-background);
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+    .section-actions,
+    .table-list-actions,
+    .table-list-actions-expanded {
+        display: none !important;
+    }
+
+    .table-card,
+    .table-list-item {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .table-list-item {
+        border: 1px solid #000;
+    }
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+
+.table-list-item.loading,
+.table-card.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.table-list-item,
+.table-card {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Stagger animation for multiple items */
+.table-list-item:nth-child(1),
+.table-card:nth-child(1) {
+    animation-delay: 0s;
+}
+.table-list-item:nth-child(2),
+.table-card:nth-child(2) {
+    animation-delay: 0.05s;
+}
+.table-list-item:nth-child(3),
+.table-card:nth-child(3) {
+    animation-delay: 0.1s;
+}
+.table-list-item:nth-child(4),
+.table-card:nth-child(4) {
+    animation-delay: 0.15s;
+}
+.table-list-item:nth-child(5),
+.table-card:nth-child(5) {
+    animation-delay: 0.2s;
+}
+
+/* Hover effects */
+.table-list-item:hover .table-list-icon {
+    transform: scale(1.05);
+    transition: transform var(--transition-base);
+}
+
+.table-card:hover .table-card-title {
+    color: var(--color-primary);
+    transition: color var(--transition-base);
+}
+
+/* ============================================
+   Expand/Collapse Button
+   ============================================ */
+
+.btn-icon.job-expand-btn,
+.btn-icon.table-expand-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition-all);
+}
+
+.btn-icon.job-expand-btn:hover,
+.btn-icon.table-expand-btn:hover {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+}
+
+.btn-icon.job-expand-btn svg,
+.btn-icon.table-expand-btn svg {
+    width: 16px;
+    height: 16px;
+    color: var(--color-text);
+}
+
+/* Dark theme */
+[data-theme='dark'] .btn-icon.job-expand-btn,
+[data-theme='dark'] .btn-icon.table-expand-btn {
+    background: var(--color-background);
+}
+
+[data-theme='dark'] .btn-icon.job-expand-btn:hover,
+[data-theme='dark'] .btn-icon.table-expand-btn:hover {
+    background: var(--color-surface);
+}
+
+/* ============================================
+   SQL Query Runner
+   ============================================ */
+
+.query-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.query-section .section-header {
+    margin-bottom: var(--spacing-md);
+}
+
+.query-section .section-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+/* Ensure tables section is separate */
+.tables-section {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid var(--color-border);
+}
+
+.tables-section .section-header {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* View mode toggle should be in tables section only */
+.tables-section .section-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.query-input-container {
+    background: var(--color-background);  /* ✅ FIXED: Was white */
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.sql-query-textarea {
+    width: 100%;
+    min-height: 60px;  /* ✅ FIXED: Was 30px, now 60px (3 rows) */
+    max-height: 200px;  /* ✅ NEW: Limit max height */
+    padding: var(--spacing-md);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+    resize: vertical;
+    transition: var(--transition-all);
+}
+
+.sql-query-textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus);
+}
+
+.query-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.query-hint {
+    margin-left: auto;
+    font-size: var(--font-size-sm);  /* ✅ FIXED: Was 0.8125rem */
+    color: var(--color-text-secondary);
+}
+
+/* Query Builder */
+.query-builder-container {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.query-builder-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.query-builder-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.query-builder-group label {
+    font-size: var(--font-size-xs);  /* ✅ FIXED: Was 0.75rem */
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Query Results */
+.query-results {
+    background: var(--color-background);  /* ✅ FIXED: Was white */
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+}
+
+.query-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.query-results-info {
+    font-size: var(--font-size-sm);  /* ✅ FIXED: Was 0.875rem */
+    color: var(--color-text-secondary);
+}
+
+/* Dark Theme */
+[data-theme='dark'] .query-input-container,
+[data-theme='dark'] .query-builder-container,
+[data-theme='dark'] .query-results {
+    background: var(--color-surface);
+}
+
+[data-theme='dark'] .sql-query-textarea {
+    background: var(--color-background);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .query-builder-row {
+        grid-template-columns: 1fr;
+    }
+
+    .query-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .query-hint {
+        margin-left: 0;
+        text-align: center;
+    }
+}
+
+/* ============================================
+   List View Accordion (Step 6)
+   ============================================ */
+
+.table-data-accordion {
+    padding: var(--spacing-md);
+    background: var(--color-background);
+    border-top: 1px solid var(--color-border);
+    animation: slideDown 0.3s ease-out;
+}
+
+/* Ensure data table fits in accordion */
+.table-data-accordion .data-table-container {
+    margin: 0;
+}
+
+
+/* ============================================
+   SYNC INTEGRATION STYLES
+   ============================================ */
+
+/* Sync status badge in list */
+.table-list-sync-status {
+    margin-right: var(--spacing-sm);
+    flex-shrink: 0;
+}
+
+/* Sync footer */
+.tables-sync-footer {
+    padding: var(--spacing-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    margin-top: var(--spacing-md);
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-start;
+}
+
+/* Stat cards for master stats modal */
+.stat-card-compact {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    text-align: center;
+    transition: var(--transition-all);
+}
+
+.stat-card-compact:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.stat-value-compact {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.stat-label-compact {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Dark theme support */
+[data-theme='dark'] .stat-card-compact {
+    background: var(--color-background);
+}
+
+[data-theme='dark'] .tables-sync-footer {
+    background: var(--color-background);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tables-sync-footer {
+        flex-direction: column;
+    }
+    
+    .tables-sync-footer .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .table-list-sync-status {
+        order: -1;
+        margin-right: 0;
+        margin-bottom: var(--spacing-xs);
+    }
+}
+
+/* ============================================
+   Sync Results Modal Styles
+   ============================================ */
+
+.sync-results {
+    padding: 1rem;
+}
+
+.sync-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--color-bg-secondary);
+    border-radius: 8px;
+}
+
+.sync-summary .stat {
+    text-align: center;
+}
+
+.sync-summary .stat .label {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.sync-summary .stat .value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-success);
+}
+
+.sync-summary .stat.error .value {
+    color: var(--color-error);
+}
+
+.sync-summary .stat.duration .value {
+    color: var(--color-primary);
+}
+
+.sync-stats {
+    margin-bottom: 1.5rem;
+}
+
+.sync-stats h4 {
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.sync-stats table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.sync-stats table tbody tr {
+    border-bottom: 1px solid var(--color-border);
+}
+
+.sync-stats table td {
+    padding: 0.5rem;
+}
+
+.sync-stats table td:first-child {
+    font-weight: 500;
+}
+
+.sync-stats table td:last-child {
+    text-align: right;
+}
+
+.sync-stats table tr.total {
+    background: var(--color-bg-secondary);
+    font-weight: 600;
+}
+
+.sync-stats .stat-inserted {
+    color: var(--color-success);
+}
+
+.sync-stats .stat-updated {
+    color: var(--color-info);
+}
+
+.sync-stats .stat-skipped {
+    color: var(--color-warning);
+}
+
+.sync-details {
+    margin-top: 1rem;
+}
+
+.sync-details summary {
+    cursor: pointer;
+    padding: 0.75rem;
+    background: var(--color-bg-secondary);
+    border-radius: 4px;
+    font-weight: 600;
+    user-select: none;
+}
+
+.sync-details summary:hover {
+    background: var(--color-bg-hover);
+}
+
+.sync-details .results-table-container {
+    margin-top: 1rem;
+    overflow-x: auto;
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.results-table thead tr {
+    background: var(--color-bg-secondary);
+}
+
+.results-table th {
+    padding: 0.5rem;
+    font-weight: 600;
+    text-align: left;
+}
+
+.results-table th:not(:first-child) {
+    text-align: right;
+}
+
+.results-table tbody tr {
+    border-bottom: 1px solid var(--color-border);
+}
+
+.results-table tbody tr:hover {
+    background: var(--color-bg-hover);
+}
+
+.results-table td {
+    padding: 0.5rem;
+}
+
+.results-table td:first-child {
+    font-weight: 500;
+}
+
+.results-table td:not(:first-child) {
+    text-align: right;
+}
+
+.results-table .stat-inserted {
+    color: var(--color-success);
+}
+
+.results-table .stat-updated {
+    color: var(--color-info);
+}
+
+.results-table .stat-skipped {
+    color: var(--color-warning);
+}

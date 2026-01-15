@@ -1,0 +1,89 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "gnetId": null,
+  "id": null,
+  "panels": [
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisLabel": "Walks/sec",
+            "drawStyle": "line",
+            "fillOpacity": 10
+          }
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "id": 1,
+      "targets": [
+        {"expr": "rate(snmp_walk_total{status=\"success\"}[5m])", "legendFormat": "Success"},
+        {"expr": "rate(snmp_walk_total{status=\"failed\"}[5m])", "legendFormat": "Failed"},
+        {"expr": "rate(snmp_walk_total{status=\"timeout\"}[5m])", "legendFormat": "Timeout"}
+      ],
+      "title": "SNMP Walk Success Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {"axisLabel": "OIDs/sec", "drawStyle": "line"}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "id": 2,
+      "targets": [
+        {"expr": "rate(snmp_oids_collected_total[5m])", "legendFormat": "OIDs Collected"}
+      ],
+      "title": "OIDs Collected",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {"axisLabel": "Traps/sec", "drawStyle": "line"}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "id": 3,
+      "targets": [
+        {"expr": "rate(snmp_traps_sent_total[5m])", "legendFormat": "{{status}}"}
+      ],
+      "title": "Traps Sent",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {"axisLabel": "Resolutions/sec", "drawStyle": "line"}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "id": 4,
+      "targets": [
+        {"expr": "rate(app_oid_resolutions_total{status=\"success\", source=\"cache\"}[5m])", "legendFormat": "From Cache"},
+        {"expr": "rate(app_oid_resolutions_total{status=\"success\", source=\"database\"}[5m])", "legendFormat": "From Database"},
+        {"expr": "rate(app_oid_resolutions_total{status=\"failed\"}[5m])", "legendFormat": "Failed"}
+      ],
+      "title": "OID Resolution",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["trishul", "snmp"],
+  "time": {"from": "now-1h", "to": "now"},
+  "timezone": "browser",
+  "title": "Trishul - SNMP",
+  "uid": "trishul-snmp",
+  "version": 1
+}

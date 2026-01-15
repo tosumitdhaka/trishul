@@ -1,0 +1,414 @@
+/**
+ * ============================================
+ * Design System - CSS Variables (OPTIMIZED)
+ * ============================================
+ * 
+ * Combines the best of old and new:
+ * - Old typography (compact, readable)
+ * - Old spacing (simpler scale)
+ * - Old colors (vibrant, purposeful)
+ * - New component tokens (reusable)
+ * - New documentation (clear)
+ * 
+ * @version 2.1.0
+ */
+
+:root {
+    /* ============================================
+       COLOR SYSTEM
+       ============================================ */
+    
+    /* Primary Colors */
+    --color-primary: #2563eb;
+    --color-primary-hover: #1d4ed8;
+    --color-primary-active: #1e40af;
+    --color-primary-light: #dbeafe;
+    --color-primary-dark: #1e40af;
+    
+    /* Secondary Colors (Green - more vibrant than gray) */
+    --color-secondary: #10b981;
+    --color-secondary-hover: #059669;
+    --color-secondary-light: #d1fae5;
+    --color-secondary-dark: #047857;
+    
+    /* Accent Colors */
+    --color-accent: #f59e0b;
+    --color-accent-hover: #d97706;
+    --color-accent-light: #fef3c7;
+    
+    /* Status Colors */
+    --color-success: #10b981;
+    --color-success-hover: #059669;
+    --color-success-light: #d1fae5;
+    --color-success-bg: #d1fae5;
+    
+    --color-warning: #f59e0b;
+    --color-warning-hover: #d97706;
+    --color-warning-light: #fef3c7;
+    --color-warning-bg: #fef3c7;
+    
+    
+    --color-danger: #ef4444;
+    --color-danger-hover: #dc2626;
+    --color-danger-light: #fcf3eb;
+    --color-danger-dark: #b91c1c;
+    --color-danger-bg: #ffd6c0;
+    
+    --color-info: #3b82f6;
+    --color-info-hover: #2563eb;
+    --color-info-light: #dbeafe;
+    --color-info-bg: #dbeafe;
+    
+    --color-error: #ef4444;
+    --color-error-bg: #fee2e2;
+    
+    /* Neutral Grays */
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-gray-50: #f9fafb;
+    --color-gray-100: #f3f4f6;
+    --color-gray-200: #e5e7eb;
+    --color-gray-300: #d1d5db;
+    --color-gray-400: #9ca3af;
+    --color-gray-500: #6b7280;
+    --color-gray-600: #4b5563;
+    --color-gray-700: #374151;
+    --color-gray-800: #1f2937;
+    --color-gray-900: #111827;
+    
+    /* Semantic Colors (Light Theme) */
+    --color-background: var(--color-white);
+    --color-surface: var(--color-gray-50);
+    --color-surface-hover: #f3f4f6;
+    --color-border: var(--color-gray-200);
+    --color-border-light: var(--color-gray-100);
+    --color-border-dark: var(--color-gray-300);
+    
+    --color-text: var(--color-gray-900);
+    --color-text-secondary: var(--color-gray-600);
+    --color-text-tertiary: #9ca3af;
+    --color-text-muted: var(--color-gray-400);
+    --color-text-inverse: var(--color-white);
+    
+    /* ============================================
+       TYPOGRAPHY (OLD STYLE - COMPACT)
+       ============================================ */
+    
+    /* Font Families */
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    --font-family-mono: 'Fira Code', 'Courier New', monospace;
+    --font-family-base: var(--font-family);
+    --font-family-heading: var(--font-family);
+    
+    /* Font Sizes (OLD - Compact for data-heavy UIs) */
+    --font-size-xs: 10px;
+    --font-size-sm: 12px;
+    --font-size-base: 14px;
+    --font-size-lg: 16px;
+    --font-size-xl: 18px;
+    --font-size-2xl: 24px;
+    --font-size-3xl: 32px;
+    
+    /* Font Weights */
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    
+    /* Line Heights */
+    --line-height-tight: 1.25;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.75;
+    
+    /* ============================================
+       SPACING SYSTEM (OLD - SIMPLER)
+       ============================================ */
+    
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+    --spacing-3xl: 64px;
+    --spacing-xxl: 64px;  /* Alias for 3xl */
+    
+    /* ============================================
+       BORDERS (OLD - SIMPLER)
+       ============================================ */
+    
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+    
+    /* ============================================
+       SHADOWS
+       ============================================ */
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+    --shadow-none: none;
+    
+    /* Focus Shadow */
+    --shadow-focus: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    --shadow-focus-danger: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    
+    /* ============================================
+       TRANSITIONS
+       ============================================ */
+    
+    --transition-fast: 150ms ease-in-out;
+    --transition-base: 200ms ease-in-out;
+    --transition-slow: 300ms ease-in-out;
+    
+    /* Transition Properties */
+    --transition-all: all var(--transition-base);
+    --transition-colors: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+    --transition-opacity: opacity var(--transition-base);
+    --transition-transform: transform var(--transition-base);
+    
+    /* ============================================
+       Z-INDEX
+       ============================================ */
+    
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
+    
+    /* ============================================
+       LAYOUT
+       ============================================ */
+    
+    --header-height: 64px;
+    --sidebar-width: 240px;
+    --content-max-width: 1400px;
+    
+    /* Container Widths */
+    --container-sm: 640px;
+    --container-md: 768px;
+    --container-lg: 1024px;
+    --container-xl: 1280px;
+    --container-2xl: 1536px;
+    
+    /* ============================================
+       COMPONENT TOKENS (NEW - REUSABLE)
+       ============================================ */
+    
+    /* Buttons */
+    --btn-padding-sm: var(--spacing-xs) var(--spacing-sm);
+    --btn-padding-md: var(--spacing-sm) var(--spacing-md);
+    --btn-padding-lg: var(--spacing-md) var(--spacing-lg);
+    --btn-font-size-sm: var(--font-size-xs);
+    --btn-font-size-md: var(--font-size-sm);
+    --btn-font-size-lg: var(--font-size-base);
+    --btn-border-radius: var(--radius-md);
+    
+    /* Inputs */
+    --input-padding: var(--spacing-sm) var(--spacing-md);
+    --input-border-radius: var(--radius-md);
+    --input-border-color: var(--color-border);
+    --input-border-color-focus: var(--color-primary);
+    --input-bg: var(--color-background);
+    --input-bg-disabled: var(--color-gray-100);
+    
+    /* Cards */
+    --card-padding: var(--spacing-lg);
+    --card-border-radius: var(--radius-lg);
+    --card-shadow: var(--shadow-sm);
+    --card-shadow-hover: var(--shadow-md);
+    
+    /* Tables */
+    --table-border-color: var(--color-border);
+    --table-header-bg: var(--color-surface);
+    --table-row-hover-bg: var(--color-surface-hover);
+    --table-cell-padding: var(--spacing-sm) var(--spacing-md);
+    
+    /* Modals */
+    --modal-backdrop-bg: rgba(0, 0, 0, 0.5);
+    --modal-border-radius: var(--radius-xl);
+    --modal-shadow: var(--shadow-2xl);
+    --modal-padding: var(--spacing-xl);
+    
+    /* Tooltips */
+    --tooltip-bg: var(--color-gray-900);
+    --tooltip-color: var(--color-text-inverse);
+    --tooltip-padding: var(--spacing-xs) var(--spacing-sm);
+    --tooltip-border-radius: var(--radius-sm);
+    --tooltip-font-size: var(--font-size-xs);
+    
+    /* Badges */
+    --badge-padding: var(--spacing-xs) var(--spacing-sm);
+    --badge-border-radius: var(--radius-full);
+    --badge-font-size: var(--font-size-xs);
+    --badge-font-weight: var(--font-weight-medium);
+    
+    /* Progress Bars */
+    --progress-height: 0.5rem;
+    --progress-bg: var(--color-gray-200);
+    --progress-border-radius: var(--radius-full);
+}
+
+/* ============================================
+   DARK THEME
+   ============================================ */
+
+[data-theme="dark"] {
+    /* Primary Colors */
+    --color-primary: #3b82f6;
+    --color-primary-hover: #2563eb;
+    --color-primary-dark: #1e40af;
+    --color-primary-light: #1e3a8a;
+    
+    /* Secondary Colors */
+    --color-secondary: #34d399;
+    --color-secondary-hover: #10b981;
+    --color-secondary-light: #064e3b;
+    
+    /* Accent Colors */
+    --color-accent: #fbbf24;
+    --color-accent-hover: #f59e0b;
+    --color-accent-light: #78350f;
+    
+    /* Status Colors */
+    --color-danger: #f87171;
+    --color-danger-hover: #ef4444;
+    --color-danger-dark: #b91c1c;
+    --color-danger-light: #7f1d1d;
+    
+    /* Semantic Colors */
+    --color-background: #0f172a;
+    --color-surface: #1e293b;
+    --color-surface-hover: #334155;
+    --color-border: #334155;
+    --color-text: #f1f5f9;
+    --color-text-secondary: #cbd5e1;
+    --color-text-muted: #64748b;
+    --color-text-tertiary: #64748b;
+    
+    /* Status Backgrounds */
+    --color-info-bg: #1e3a8a;
+    --color-warning-bg: #78350f;
+    --color-error-bg: #7f1d1d;
+    --color-success-bg: #064e3b;
+    --color-danger-bg: #7f1d1d;
+    
+    /* Component Adjustments */
+    --table-header-bg: #1e293b;
+    --table-row-hover-bg: #334155;
+    --input-bg: #1e293b;
+    --input-bg-disabled: #334155;
+    --input-border-color: #4b5563;
+    
+    /* Shadows (darker) */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+    
+    /* Modal backdrop (darker) */
+    --modal-backdrop-bg: rgba(0, 0, 0, 0.75);
+}
+
+/* ============================================
+   SMOOTH THEME TRANSITION
+   ============================================ */
+
+* {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-duration: var(--transition-base);
+    transition-timing-function: ease-in-out;
+}
+
+/* Prevent transition on page load */
+.no-transition * {
+    transition: none !important;
+}
+
+/* ============================================
+   THEME-SPECIFIC ADJUSTMENTS
+   ============================================ */
+
+[data-theme='dark'] .upload-area:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+[data-theme='dark'] .format-option:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+[data-theme='dark'] .format-option.selected {
+    background-color: rgba(59, 130, 246, 0.2);
+}
+
+[data-theme='dark'] .search-result-item:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Text Colors */
+.text-primary { color: var(--color-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-muted { color: var(--color-text-muted); }
+.text-danger { color: var(--color-danger); }
+.text-success { color: var(--color-success); }
+.text-warning { color: var(--color-warning); }
+.text-info { color: var(--color-info); }
+
+/* Background Colors */
+.bg-primary { background-color: var(--color-primary); }
+.bg-surface { background-color: var(--color-surface); }
+.bg-danger { background-color: var(--color-danger); }
+.bg-success { background-color: var(--color-success); }
+.bg-warning { background-color: var(--color-warning); }
+.bg-info { background-color: var(--color-info); }
+
+/* Spacing Utilities */
+.m-0 { margin: 0; }
+.m-xs { margin: var(--spacing-xs); }
+.m-sm { margin: var(--spacing-sm); }
+.m-md { margin: var(--spacing-md); }
+.m-lg { margin: var(--spacing-lg); }
+
+.p-0 { padding: 0; }
+.p-xs { padding: var(--spacing-xs); }
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+
+/* Text Utilities */
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-lg { font-size: var(--font-size-lg); }
+
+.font-normal { font-weight: var(--font-weight-normal); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+    :root {
+        --color-background: white;
+        --color-surface: white;
+        --color-text: black;
+        --color-border: #ccc;
+    }
+}

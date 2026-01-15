@@ -1,0 +1,13 @@
+{{- if and .Values.monitoring.enabled .Values.monitoring.grafana.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "trishul.fullname" . }}-grafana-dashboards
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+data:
+  # Placeholder - Import dashboards manually via Grafana UI
+  # Dashboard JSON files provided separately
+  .keep: ""
+{{- end }}

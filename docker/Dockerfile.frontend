@@ -1,0 +1,18 @@
+FROM nginx:alpine
+
+# Install gettext for envsubst
+RUN apk add --no-cache gettext
+
+# Copy template to /tmp (writable)
+COPY docker/nginx.conf /tmp/nginx.conf.template
+
+# Copy frontend files
+COPY frontend/ /usr/share/nginx/html/
+
+# Default upload size
+ENV NGINX_CLIENT_MAX_BODY_SIZE=100M
+
+EXPOSE 80
+
+# Generate config in /tmp, then start nginx with custom config path
+CMD ["/bin/sh", "-c", "envsubst '${NGINX_CLIENT_MAX_BODY_SIZE}' < /tmp/nginx.conf.template > /tmp/nginx.conf && exec nginx -c /tmp/nginx.conf -g 'daemon off;'"]

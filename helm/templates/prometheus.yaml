@@ -1,0 +1,539 @@
+{{- if .Values.monitoring.enabled }}
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "trishul.fullname" . }}-prometheus
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "trishul.fullname" . }}-prometheus
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - nodes/proxy
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources:
+  - configmaps
+  verbs: ["get"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "trishul.fullname" . }}-prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "trishul.fullname" . }}-prometheus
+subjects:
+- kind: ServiceAccount
+  name: {{ include "trishul.fullname" . }}-prometheus
+  namespace: {{ .Release.Namespace }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "trishul.fullname" . }}-prometheus-config
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: {{ .Values.monitoring.prometheus.scrapeInterval }}
+      evaluation_interval: {{ .Values.monitoring.prometheus.scrapeInterval }}
+
+    {{- if .Values.monitoring.alertmanager.enabled }}
+    # Alertmanager configuration
+    alerting:
+      alertmanagers:
+      - static_configs:
+        - targets:
+          - {{ include "trishul.fullname" . }}-alertmanager:9093
+    
+    # Load alert rules
+    rule_files:
+    - '/etc/prometheus/rules/*.yml'
+    {{- end }}
+    
+    scrape_configs:
+    # Scrape Trishul backend metrics
+    - job_name: 'trishul-backend'
+      metrics_path: '/api/v1/metrics/prometheus'
+      scrape_interval: 30s
+      kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+          - {{ .Release.Namespace }}
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        action: keep
+        regex: {{ include "trishul.fullname" . }}-backend
+      - source_labels: [__meta_kubernetes_endpoint_port_name]
+        action: keep
+        regex: http
+      - source_labels: [__meta_kubernetes_namespace]
+        target_label: namespace
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: pod
+      - source_labels: [__meta_kubernetes_pod_node_name]
+        target_label: node
+      - source_labels: [__meta_kubernetes_service_name]
+        target_label: service
+    
+    # Scrape node-exporter (only essential metrics)
+    {{- if .Values.monitoring.nodeExporter.enabled }}
+    - job_name: 'node-exporter'
+      kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+          - {{ .Release.Namespace }}
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        action: keep
+        regex: {{ include "trishul.fullname" . }}-node-exporter
+      - source_labels: [__meta_kubernetes_namespace]
+        target_label: namespace
+      - source_labels: [__meta_kubernetes_pod_node_name]
+        target_label: node
+      # Keep only 10-15 essential node metrics
+      metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: '(node_cpu_seconds_total|node_memory_MemTotal_bytes|node_memory_MemAvailable_bytes|node_memory_MemFree_bytes|node_load1|node_load5|node_load15|node_filesystem_avail_bytes|node_filesystem_size_bytes|node_filesystem_free_bytes|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_disk_read_bytes_total|node_disk_written_bytes_total|node_disk_io_time_seconds_total)'
+        action: keep
+    {{- end }}
+    
+    # Scrape kube-state-metrics (only essential K8s metrics)
+    {{- if .Values.monitoring.kubeStateMetrics.enabled }}
+    - job_name: 'kube-state-metrics'
+      kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+          - {{ .Release.Namespace }}
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        action: keep
+        regex: {{ include "trishul.fullname" . }}-kube-state-metrics
+      - source_labels: [__meta_kubernetes_namespace]
+        target_label: namespace
+      # Keep only 5-8 essential kube metrics
+      metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: '(kube_pod_status_phase|kube_pod_container_status_restarts_total|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_deployment_status_replicas|kube_deployment_status_replicas_available|kube_node_status_condition|kube_persistentvolume_status_phase)'
+        action: keep
+    {{- end }}
+
+    # Kubelet cAdvisor (Container Metrics)
+    - job_name: 'kubernetes-cadvisor'
+      scheme: https
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        insecure_skip_verify: true
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      
+      kubernetes_sd_configs:
+      - role: node
+      
+      relabel_configs:
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_(.+)
+      
+      - target_label: __address__
+        replacement: kubernetes.default.svc:443
+      
+      - source_labels: [__meta_kubernetes_node_name]
+        regex: (.+)
+        target_label: __metrics_path__
+        replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+      
+      - source_labels: [__meta_kubernetes_node_name]
+        target_label: node
+      
+      metric_relabel_configs:
+      - source_labels: [namespace]
+        action: keep
+        regex: {{ .Release.Namespace }}
+    
+    # Kubelet (Node Metrics)
+    - job_name: 'kubernetes-nodes'
+      scheme: https
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        insecure_skip_verify: true
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      
+      kubernetes_sd_configs:
+      - role: node
+      
+      relabel_configs:
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_(.+)
+      
+      - target_label: __address__
+        replacement: kubernetes.default.svc:443
+      
+      - source_labels: [__meta_kubernetes_node_name]
+        regex: (.+)
+        target_label: __metrics_path__
+        replacement: /api/v1/nodes/${1}/proxy/metrics
+      
+      - source_labels: [__meta_kubernetes_node_name]
+        target_label: node
+    
+    # Scrape Prometheus itself
+    - job_name: 'prometheus'
+      static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          namespace: {{ .Release.Namespace }}
+          app: prometheus
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "trishul.fullname" . }}-prometheus-data
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  {{- if .Values.monitoring.prometheus.storage.storageClass }}
+  storageClassName: {{ .Values.monitoring.prometheus.storage.storageClass }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.monitoring.prometheus.storage.size }}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trishul.fullname" . }}-prometheus
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+    app.kubernetes.io/component: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "trishul.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: prometheus
+  template:
+    metadata:
+      labels:
+        {{- include "trishul.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: prometheus
+    spec:
+      serviceAccountName: {{ include "trishul.fullname" . }}-prometheus
+      containers:
+      - name: prometheus
+        image: prom/prometheus:v2.48.0
+        args:
+        - '--config.file=/etc/prometheus/prometheus.yml'
+        - '--storage.tsdb.path=/prometheus'
+        - '--storage.tsdb.retention.time={{ .Values.monitoring.prometheus.retention }}'
+        - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+        - '--web.console.templates=/usr/share/prometheus/consoles'
+        ports:
+        - name: web
+          containerPort: 9090
+        volumeMounts:
+        - name: config
+          mountPath: /etc/prometheus
+        - name: data
+          mountPath: /prometheus
+        {{- if .Values.monitoring.alertmanager.enabled }}
+        - name: rules
+          mountPath: /etc/prometheus/rules
+        {{- end }}
+        resources:
+          {{- toYaml .Values.monitoring.prometheus.resources | nindent 10 }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "trishul.fullname" . }}-prometheus-config
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ include "trishul.fullname" . }}-prometheus-data
+      {{- if .Values.monitoring.alertmanager.enabled }}
+      - name: rules
+        configMap:
+          name: {{ include "trishul.fullname" . }}-alert-rules
+      {{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trishul.fullname" . }}-prometheus
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+    app.kubernetes.io/component: prometheus
+spec:
+  type: {{ .Values.monitoring.prometheus.service.type }}
+  {{- if eq .Values.monitoring.prometheus.service.type "NodePort" }}
+  ports:
+  - name: web
+    port: 9090
+    targetPort: 9090
+    nodePort: {{ .Values.monitoring.prometheus.service.nodePort }}
+    protocol: TCP
+  {{- else }}
+  ports:
+  - name: web
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+  {{- end }}
+  selector:
+    {{- include "trishul.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: prometheus
+
+{{- if .Values.monitoring.nodeExporter.enabled }}
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "trishul.fullname" . }}-node-exporter
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+    app.kubernetes.io/component: node-exporter
+spec:
+  selector:
+    matchLabels:
+      {{- include "trishul.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: node-exporter
+  template:
+    metadata:
+      labels:
+        {{- include "trishul.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: node-exporter
+    spec:
+      hostNetwork: true
+      hostPID: true
+      containers:
+      - name: node-exporter
+        image: prom/node-exporter:v1.7.0
+        args:
+        - '--path.procfs=/host/proc'
+        - '--path.sysfs=/host/sys'
+        - '--path.rootfs=/host/root'
+        - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+        # Disable all verbose collectors
+        - '--no-collector.arp'
+        - '--no-collector.bcache'
+        - '--no-collector.bonding'
+        - '--no-collector.conntrack'
+        - '--no-collector.entropy'
+        - '--no-collector.hwmon'
+        - '--no-collector.infiniband'
+        - '--no-collector.ipvs'
+        - '--no-collector.mdadm'
+        - '--no-collector.netclass'
+        - '--no-collector.netstat'
+        - '--no-collector.nfs'
+        - '--no-collector.nfsd'
+        - '--no-collector.pressure'
+        - '--no-collector.rapl'
+        - '--no-collector.schedstat'
+        - '--no-collector.sockstat'
+        - '--no-collector.softnet'
+        - '--no-collector.stat'
+        - '--no-collector.textfile'
+        - '--no-collector.thermal_zone'
+        - '--no-collector.time'
+        - '--no-collector.timex'
+        - '--no-collector.udp_queues'
+        - '--no-collector.vmstat'
+        - '--no-collector.xfs'
+        - '--no-collector.zfs'
+        ports:
+        - name: metrics
+          containerPort: 9100
+        volumeMounts:
+        - name: proc
+          mountPath: /host/proc
+          readOnly: true
+        - name: sys
+          mountPath: /host/sys
+          readOnly: true
+        - name: root
+          mountPath: /host/root
+          readOnly: true
+        resources:
+          {{- toYaml .Values.monitoring.nodeExporter.resources | nindent 10 }}
+      volumes:
+      - name: proc
+        hostPath:
+          path: /proc
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: root
+        hostPath:
+          path: /
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trishul.fullname" . }}-node-exporter
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+    app.kubernetes.io/component: node-exporter
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - name: metrics
+    port: 9100
+    targetPort: 9100
+  selector:
+    {{- include "trishul.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: node-exporter
+{{- end }}
+
+{{- if .Values.monitoring.kubeStateMetrics.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trishul.fullname" . }}-kube-state-metrics
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+    app.kubernetes.io/component: kube-state-metrics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "trishul.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: kube-state-metrics
+  template:
+    metadata:
+      labels:
+        {{- include "trishul.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: kube-state-metrics
+    spec:
+      serviceAccountName: {{ include "trishul.fullname" . }}-kube-state-metrics
+      containers:
+      - name: kube-state-metrics
+        image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.10.1
+        args:
+        # Only monitor essential resources in trishul namespace
+        - '--resources=pods,deployments,nodes,persistentvolumes,persistentvolumeclaims'
+        - '--namespaces={{ .Release.Namespace }}'
+        ports:
+        - name: http-metrics
+          containerPort: 8080
+        - name: telemetry
+          containerPort: 8081
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8081
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        resources:
+          {{- toYaml .Values.monitoring.kubeStateMetrics.resources | nindent 10 }}
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "trishul.fullname" . }}-kube-state-metrics
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "trishul.fullname" . }}-kube-state-metrics
+rules:
+- apiGroups: [""]
+  resources:
+  - configmaps
+  - secrets
+  - nodes
+  - pods
+  - services
+  - resourcequotas
+  - replicationcontrollers
+  - limitranges
+  - persistentvolumeclaims
+  - persistentvolumes
+  - namespaces
+  - endpoints
+  verbs: ["list", "watch"]
+- apiGroups: ["apps"]
+  resources:
+  - statefulsets
+  - daemonsets
+  - deployments
+  - replicasets
+  verbs: ["list", "watch"]
+- apiGroups: ["batch"]
+  resources:
+  - cronjobs
+  - jobs
+  verbs: ["list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "trishul.fullname" . }}-kube-state-metrics
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "trishul.fullname" . }}-kube-state-metrics
+subjects:
+- kind: ServiceAccount
+  name: {{ include "trishul.fullname" . }}-kube-state-metrics
+  namespace: {{ .Release.Namespace }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trishul.fullname" . }}-kube-state-metrics
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+    app.kubernetes.io/component: kube-state-metrics
+spec:
+  type: ClusterIP
+  ports:
+  - name: http-metrics
+    port: 8080
+    targetPort: 8080
+  - name: telemetry
+    port: 8081
+    targetPort: 8081
+  selector:
+    {{- include "trishul.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: kube-state-metrics
+{{- end }}
+{{- end }}

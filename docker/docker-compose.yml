@@ -1,0 +1,116 @@
+# ============================================
+# Docker Compose for Trishul
+# ============================================
+
+version: '3.8'
+
+services:
+  # ============================================
+  # MySQL Database
+  # ============================================
+  mysql:
+    image: mysql:8.0
+    container_name: trishul-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: trishul123
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ptrishul123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - trishul-network
+
+  # ============================================
+  # Backend (FastAPI)
+  # ============================================
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    image: trishul/trishul-backend:2.0.0
+    container_name: trishul-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      # Database configuration
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: trishul123
+      
+      # Data directories
+      DATA_DIR: /app/data
+      COMPILED_DIR: /app/data/compiled_mibs
+      CACHE_DIR: /app/data/cache
+      EXPORT_DIR: /app/data/exports
+      UPLOAD_DIR: /app/data/uploads
+      LOG_FILE: /app/data/logs/trishul.log
+      
+      # Application config
+      WEB_HOST: 0.0.0.0
+      WEB_PORT: 8000
+      LOG_LEVEL: INFO
+    ports:
+      - "8000:8000"
+      - "162:1162"  # Map host 162 to container 1162 (trap receiver)
+    volumes:
+      - app-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - trishul-network
+
+  # ============================================
+  # Frontend (Nginx)
+  # ============================================
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
+    image: trishul/trishul-frontend:2.0.0
+    container_name: trishul-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - trishul-network
+
+# ============================================
+# Volumes
+# ============================================
+volumes:
+  mysql-data:
+    driver: local
+  app-data:
+    driver: local
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  trishul-network:
+    driver: bridge

@@ -1,0 +1,100 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Project specific
+cache/*
+!cache/.gitkeep
+logs/*
+!logs/.gitkeep
+compiled_mibs/*
+web/compiled_mibs/*
+web/compiled_mibs
+web/cache/*
+!compiled_mibs/.gitkeep
+exports/*
+!exports/.gitkeep
+*.cache
+*.log
+*.db
+*.sqlite
+standard_mibs/*
+data/*
+
+# Configuration (keep sample only)
+!config/config.yaml
+
+# Test coverage
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Documentation builds
+docs/_build/
+docs/_static/
+docs/_templates/
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
+.~*
+
+# Database
+*.sql
+*.sqlite3
+*.db
+
+# Sensitive data
+*_secret*
+*_private*
+passwords.txt
+credentials.json
+
+# Markdown files (as per requirement)
+*.md
+*.markdown
+uploads/*
+

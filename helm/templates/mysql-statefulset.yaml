@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "trishul.fullname" . }}-mysql
+  labels:
+    {{- include "trishul.mysql.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "trishul.fullname" . }}-mysql
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "trishul.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: mysql
+  template:
+    metadata:
+      labels:
+        {{- include "trishul.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: mysql
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: mysql
+        image: {{ include "trishul.mysql.image" . }}
+        imagePullPolicy: {{ .Values.image.mysql.pullPolicy }}
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "trishul.fullname" . }}-mysql
+              key: mysql-root-password
+        - name: MYSQL_CHARACTER_SET_SERVER
+          value: {{ .Values.mysql.characterSet }}
+        - name: MYSQL_COLLATION_SERVER
+          value: {{ .Values.mysql.collation }}
+        ports:
+        - name: mysql
+          containerPort: 3306
+          protocol: TCP
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - mysqladmin ping -h localhost -p$MYSQL_ROOT_PASSWORD
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - mysqladmin ping -h localhost -p$MYSQL_ROOT_PASSWORD
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          {{- toYaml .Values.resources.mysql | nindent 10 }}
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+        - name: mysql-init
+          mountPath: /docker-entrypoint-initdb.d
+          readOnly: true
+      volumes:
+      - name: mysql-init
+        configMap:
+          name: {{ include "trishul.fullname" . }}-mysql-init
+          defaultMode: 0755
+      {{- if .Values.persistence.mysql.enabled }}
+      - name: mysql-data
+        persistentVolumeClaim:
+          claimName: {{ include "trishul.fullname" . }}-mysql-data
+      {{- else }}
+      - name: mysql-data
+        emptyDir: {}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "trishul.fullname" . }}-mysql-init
+  labels:
+    {{- include "trishul.mysql.labels" . | nindent 4 }}
+data:
+  init-db.sql: |
+    -- Create databases if they don't exist
+    {{- range .Values.mysql.databases }}
+    CREATE DATABASE IF NOT EXISTS {{ . }} CHARACTER SET {{ $.Values.mysql.characterSet }} COLLATE {{ $.Values.mysql.collation }};
+    GRANT ALL PRIVILEGES ON {{ . }}.* TO 'root'@'%';
+    {{- end }}
+    
+    FLUSH PRIVILEGES;
+    SELECT 'Trishul databases initialized successfully' AS Status;

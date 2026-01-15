@@ -1,0 +1,51 @@
+# Core dependencies
+pandas>=2.0.0
+pysnmp>=6.0.0
+pysmi>=1.0.0
+ruamel.yaml>=0.18.0
+
+# CLI dependencies
+click>=8.0.0
+click-spinner>=0.1.10
+colorama>=0.4.4
+tabulate>=0.9.0
+tqdm>=4.65.0
+
+# Web framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+pydantic>=2.0.0
+websockets>=12.0
+aiofiles>=23.0.0
+
+# Database (MySQL)
+sqlalchemy>=2.0.0
+pymysql>=1.1.0  # or mysqlclient>=2.2.0
+aiomysql>=0.2.0  # if using async SQLAlchemy
+
+# Security (if needed)
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+
+# Export
+openpyxl>=3.0.9
+xlsxwriter>=3.0.2
+lxml>=6.0.2
+
+# Scheduler
+apscheduler>=3.10.4
+
+
+# Alarm sender/receiver
+pyasn1>=0.5.0
+
+# Monitoring
+psutil==5.9.6
+prometheus-client==0.19.0
+
+# Protobuf Decoder Engine
+grpcio-tools>=1.50.0
+googleapis-common-protos>=1.50.0
+protobuf>=4.21.0
+

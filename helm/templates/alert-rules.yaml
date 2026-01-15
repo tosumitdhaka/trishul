@@ -1,0 +1,603 @@
+{{- if and .Values.monitoring.enabled .Values.monitoring.alertmanager.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "trishul.fullname" . }}-alert-rules
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+data:
+  app-alerts.yml: |
+    groups:
+    
+    # ============================================
+    # APPLICATION HEALTH ALERTS
+    # ============================================
+    - name: app_health
+      interval: 30s
+      rules:
+      
+      # Backend pod down
+      - alert: BackendDown
+        expr: up{job="trishul-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: backend
+        annotations:
+          summary: "Backend is down"
+          description: "Backend pod {{`{{ $labels.pod }}`}} has been down for more than 1 minute"
+      
+      # MySQL down
+      - alert: BackendDatabaseDown
+        expr: up{job="trishul-backend"} == 1 and absent(mysql_up)
+        for: 2m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "Backend database connection lost"
+          description: "Backend cannot connect to MySQL database"
+    
+    # ============================================
+    # PARSER PERFORMANCE ALERTS
+    # ============================================
+    - name: app_parser
+      interval: 30s
+      rules:
+      
+      # High parser failure rate
+      - alert: ParserHighFailureRate
+        expr: |
+          (
+            rate(app_parser_files_failed[5m]) 
+            / 
+            (rate(app_parser_files_compiled[5m]) + rate(app_parser_files_failed[5m]))
+          ) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          component: parser
+        annotations:
+          summary: "High parser failure rate"
+          description: "More than 50% of files are failing to parse ({{`{{ $value | humanizePercentage }}`}})"
+      
+      # Parser throughput degradation
+      - alert: ParserSlowThroughput
+        expr: app_parser_throughput_records_per_sec < 100 and app_parser_throughput_records_per_sec > 0
+        for: 10m
+        labels:
+          severity: warning
+          component: parser
+        annotations:
+          summary: "Parser throughput is slow"
+          description: "Parser throughput is {{`{{ $value | humanize }}`}} records/sec (expected >100)"
+      
+      # No parsing activity (when jobs are running)
+      - alert: ParserStalled
+        expr: |
+          rate(app_parser_records_parsed[5m]) == 0 
+          and 
+          kube_pod_status_phase{pod=~"trishul-backend.*", phase="Running"} == 1
+        for: 15m
+        labels:
+          severity: warning
+          component: parser
+        annotations:
+          summary: "Parser appears stalled"
+          description: "No parsing activity detected for 15 minutes despite pod running"
+    
+    # ============================================
+    # JOB ALERTS
+    # ============================================
+    - name: app_jobs
+      interval: 30s
+      rules:
+      
+      # High job failure rate
+      - alert: JobsHighFailureRate
+        expr: |
+          (
+            rate(app_jobs_total{status="failed"}[1h]) 
+            / 
+            rate(app_jobs_total[1h])
+          ) > 0.3
+        for: 5m
+        labels:
+          severity: warning
+          component: jobs
+        annotations:
+          summary: "High job failure rate"
+          description: "More than 30% of jobs are failing ({{`{{ $value | humanizePercentage }}`}})"
+      
+      # Too many cancelled jobs
+      - alert: JobsHighCancellationRate
+        expr: rate(app_jobs_total{status="cancelled"}[1h]) > 5
+        for: 10m
+        labels:
+          severity: info
+          component: jobs
+        annotations:
+          summary: "High job cancellation rate"
+          description: "{{`{{ $value | humanize }}`}} jobs/hour are being cancelled"
+    
+    # ============================================
+    # CACHE PERFORMANCE ALERTS
+    # ============================================
+    - name: app_cache
+      interval: 30s
+      rules:
+      
+      # Low cache hit rate
+      - alert: CacheLowHitRate
+        expr: |
+          (
+            rate(app_cache_operations{operation="hit"}[10m]) 
+            / 
+            (rate(app_cache_operations{operation="hit"}[10m]) + rate(app_cache_operations{operation="miss"}[10m]))
+          ) < 0.3
+        for: 15m
+        labels:
+          severity: info
+          component: cache
+        annotations:
+          summary: "Low cache hit rate"
+          description: "Cache hit rate is {{`{{ $value | humanizePercentage }}`}} (expected >30%)"
+      
+      # Cache size too large
+      - alert: CacheSizeLarge
+        expr: app_cache_size_bytes > 1073741824  # 1GB
+        for: 5m
+        labels:
+          severity: warning
+          component: cache
+        annotations:
+          summary: "Cache size is large"
+          description: "Cache size is {{`{{ $value | humanize1024 }}`}}B (>1GB)"
+      
+      # Too many cache files
+      - alert: CacheTooManyFiles
+        expr: app_cache_files_total > 1000
+        for: 5m
+        labels:
+          severity: info
+          component: cache
+        annotations:
+          summary: "Too many cache files"
+          description: "Cache has {{`{{ $value }}`}} files (consider cleanup)"
+    
+
+    # ============================================
+    # RESOURCE ALERTS (Pod Level - Kubernetes)
+    # ============================================
+    - name: pod_resources
+      interval: 30s
+      rules:
+      
+      # Pod CPU throttling
+      - alert: PodCPUThrottling
+        expr: |
+          rate(container_cpu_cfs_throttled_seconds_total{pod=~"trishul-backend.*", container="backend"}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: pod
+        annotations:
+          summary: "Pod CPU is being throttled"
+          description: "Pod {{`{{ $labels.pod }}`}} CPU throttled {{`{{ $value | humanizePercentage }}`}} of the time"
+      
+      # Pod restarts
+      - alert: PodRestarting
+        expr: rate(kube_pod_container_status_restarts_total{pod=~"trishul-backend.*", namespace="trishul"}[15m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          component: pod
+        annotations:
+          summary: "Pod is restarting"
+          description: "Pod {{`{{ $labels.pod }}`}} has restarted {{`{{ $value }}`}} times in the last 15 minutes"
+    
+    # ============================================
+    # DISK SPACE ALERTS
+    # ============================================
+    - name: storage
+      interval: 30s
+      rules:
+      
+      # Low disk space on node
+      - alert: NodeDiskSpaceLow
+        expr: |
+          (
+            node_filesystem_avail_bytes{mountpoint="/"} 
+            / 
+            node_filesystem_size_bytes{mountpoint="/"}
+          ) * 100 < 15
+        for: 5m
+        labels:
+          severity: warning
+          component: storage
+        annotations:
+          summary: "Low disk space on node"
+          description: "Node {{`{{ $labels.node }}`}} disk space is {{`{{ $value }}`}}% available (<15%)"
+      
+      # PVC near capacity
+      - alert: PVCNearCapacity
+        expr: |
+          (
+            kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"trishul-.*"} 
+            / 
+            kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~"trishul-.*"}
+          ) < 0.15
+        for: 5m
+        labels:
+          severity: warning
+          component: storage
+        annotations:
+          summary: "PVC near capacity"
+          description: "PVC {{`{{ $labels.persistentvolumeclaim }}`}} has {{`{{ $value | humanizePercentage }}`}} space remaining"
+    
+    # ============================================
+    # CORRELATION ALERTS (Advanced)
+    # ============================================
+    - name: app_correlation
+      interval: 30s
+      rules:
+      
+      # High memory during parsing
+      - alert: ParsingMemorySpike
+        expr: |
+          app_resource_memory_current_mb > 800 
+          and 
+          rate(app_parser_records_parsed[1m]) > 0
+        for: 5m
+        labels:
+          severity: info
+          component: parser
+        annotations:
+          summary: "High memory usage during parsing"
+          description: "Memory at {{`{{ $value }}`}}MB while parsing is active (may indicate large MIB files)"
+      
+      # Cache ineffective during parsing
+      - alert: CacheIneffectiveDuringParsing
+        expr: |
+          rate(app_cache_operations{operation="miss"}[5m]) > 10 
+          and 
+          rate(app_parser_files_compiled[5m]) > 0
+        for: 10m
+        labels:
+          severity: info
+          component: cache
+        annotations:
+          summary: "Cache not helping during parsing"
+          description: "High cache miss rate ({{`{{ $value }}`}}/sec) during active parsing"
+
+    # ============================================
+    # DATABASE ALERTS (NEW)
+    # ============================================
+    - name: app_database
+      interval: 30s
+      rules:
+      
+      # High database query failure rate
+      - alert: DatabaseHighQueryFailureRate
+        expr: |
+          (
+            rate(app_db_queries_total{status="failed"}[5m]) 
+            / 
+            rate(app_db_queries_total[5m])
+          ) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "High database query failure rate"
+          description: "{{`{{ $value | humanizePercentage }}`}} of queries are failing on {{`{{ $labels.database }}`}} database"
+      
+      # Database query duration too high
+      - alert: DatabaseSlowQueries
+        expr: app_db_query_duration_seconds > 5
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Slow database queries detected"
+          description: "Query duration is {{`{{ $value }}`}}s on {{`{{ $labels.database }}`}} ({{`{{ $labels.operation }}`}})"
+      
+      # Table sync failures
+      - alert: TableSyncFailed
+        expr: rate(app_db_sync_operations_total{status="failed"}[10m]) > 0
+        for: 2m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Table sync failures detected"
+          description: "Table {{`{{ $labels.table }}`}} sync is failing"
+      
+      # Sync taking too long
+      - alert: TableSyncSlow
+        expr: app_db_sync_duration_seconds > 60
+        for: 5m
+        labels:
+          severity: info
+          component: database
+        annotations:
+          summary: "Table sync is slow"
+          description: "Sync for {{`{{ $labels.table }}`}} took {{`{{ $value }}`}}s (>60s)"
+    
+    # ============================================
+    # SNMP ALERTS (NEW)
+    # ============================================
+    - name: app_snmp
+      interval: 30s
+      rules:
+      
+      # SNMP walk high failure rate
+      - alert: SNMPWalkHighFailureRate
+        expr: |
+          (
+            rate(snmp_walk_total{status="failed"}[10m]) + rate(snmp_walk_total{status="timeout"}[10m])
+            / 
+            rate(snmp_walk_total[10m])
+          ) > 0.3
+        for: 5m
+        labels:
+          severity: warning
+          component: snmp
+        annotations:
+          summary: "High SNMP walk failure rate"
+          description: "{{`{{ $value | humanizePercentage }}`}} of SNMP walks are failing or timing out"
+      
+      # SNMP trap send failures
+      - alert: SNMPTrapSendFailures
+        expr: rate(snmp_traps_sent_total{status="failed"}[5m]) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          component: snmp
+        annotations:
+          summary: "SNMP trap send failures"
+          description: "{{`{{ $value }}`}} traps/sec are failing to send"
+      
+      # Low OID resolution rate
+      - alert: SNMPLowOIDResolution
+        expr: snmp_walk_resolution_percentage < 50
+        for: 10m
+        labels:
+          severity: info
+          component: snmp
+        annotations:
+          summary: "Low OID resolution rate"
+          description: "Only {{`{{ $value }}`}}% of OIDs are being resolved (<50%)"
+      
+      # OID resolver high failure rate
+      - alert: OIDResolverHighFailureRate
+        expr: |
+          (
+            rate(app_oid_resolutions_total{status="failed"}[5m]) 
+            / 
+            rate(app_oid_resolutions_total[5m])
+          ) > 0.2
+        for: 10m
+        labels:
+          severity: warning
+          component: snmp
+        annotations:
+          summary: "High OID resolution failure rate"
+          description: "{{`{{ $value | humanizePercentage }}`}} of OID resolutions are failing"
+      
+      # OID cache ineffective
+      - alert: OIDCacheLowHitRate
+        expr: |
+          (
+            rate(app_oid_cache_operations_total{operation="hit"}[10m]) 
+            / 
+            (rate(app_oid_cache_operations_total{operation="hit"}[10m]) + rate(app_oid_cache_operations_total{operation="miss"}[10m]))
+          ) < 0.3
+        for: 15m
+        labels:
+          severity: info
+          component: snmp
+        annotations:
+          summary: "OID cache hit rate is low"
+          description: "Cache hit rate is {{`{{ $value | humanizePercentage }}`}} (<30%)"
+    
+    # ============================================
+    # PROTOBUF ALERTS (NEW)
+    # ============================================
+    - name: app_protobuf
+      interval: 30s
+      rules:
+      
+      # Protobuf decode failures
+      - alert: ProtobufDecodeFailures
+        expr: rate(protobuf_decode_total{status="failed"}[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          component: protobuf
+        annotations:
+          summary: "Protobuf decode failures detected"
+          description: "{{`{{ $value }}`}} protobuf decode failures/sec"
+      
+      # Protobuf compile failures
+      - alert: ProtobufCompileFailures
+        expr: rate(protobuf_compile_total{status="failed"}[5m]) > 0
+        for: 2m
+        labels:
+          severity: critical
+          component: protobuf
+        annotations:
+          summary: "Protobuf schema compilation failed"
+          description: "Protobuf schema failed to compile"
+    
+    # ============================================
+    # JOBS ALERTS (ENHANCED)
+    # ============================================
+    - name: app_jobs_enhanced
+      interval: 30s
+      rules:
+      
+      # Jobs stuck in running state
+      - alert: JobsStuckRunning
+        expr: |
+          count(app_jobs_total{status="running"}) > 0 
+          and 
+          rate(app_parser_records_parsed[5m]) == 0
+        for: 30m
+        labels:
+          severity: warning
+          component: jobs
+        annotations:
+          summary: "Jobs appear stuck"
+          description: "{{`{{ $value }}`}} jobs in running state but no parsing activity for 30 minutes"
+      
+      # Too many queued jobs
+      - alert: JobsQueueBacklog
+        expr: count(app_jobs_total{status="queued"}) > 10
+        for: 15m
+        labels:
+          severity: info
+          component: jobs
+        annotations:
+          summary: "Job queue backlog"
+          description: "{{`{{ $value }}`}} jobs queued (>10)"
+
+
+    # ============================================
+    # POD RESOURCE ALERTS (DYNAMIC - ALL PODS)
+    # ============================================
+    - name: pod_resources_dynamic
+      interval: 30s
+      rules:
+      
+      # Any Trishul pod using >80% of CPU limit
+      - alert: PodHighCPUUsage
+        expr: |
+          (
+            rate(container_cpu_usage_seconds_total{pod=~"trishul-.*", container!=""}[5m])
+            /
+            on(pod, container) group_left()
+            (kube_pod_container_resource_limits{pod=~"trishul-.*", resource="cpu"} > 0)
+          ) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          component: pod
+        annotations:
+          summary: "Pod using >80% of CPU limit"
+          description: "Pod {{`{{ $labels.pod }}`}} container {{`{{ $labels.container }}`}} using {{`{{ $value | humanizePercentage }}`}} of CPU limit"
+      
+      # Any Trishul pod using >90% of CPU limit
+      - alert: PodCriticalCPUUsage
+        expr: |
+          (
+            rate(container_cpu_usage_seconds_total{pod=~"trishul-.*", container!=""}[5m])
+            /
+            on(pod, container) group_left()
+            (kube_pod_container_resource_limits{pod=~"trishul-.*", resource="cpu"} > 0)
+          ) > 0.9
+        for: 5m
+        labels:
+          severity: critical
+          component: pod
+        annotations:
+          summary: "Pod using >90% of CPU limit"
+          description: "Pod {{`{{ $labels.pod }}`}} container {{`{{ $labels.container }}`}} using {{`{{ $value | humanizePercentage }}`}} of CPU limit"
+      
+      # Any Trishul pod using >85% of memory limit
+      - alert: PodHighMemoryUsage
+        expr: |
+          (
+            container_memory_usage_bytes{pod=~"trishul-.*", container!=""}
+            /
+            on(pod, container) group_left()
+            (kube_pod_container_resource_limits{pod=~"trishul-.*", resource="memory"} > 0)
+          ) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          component: pod
+        annotations:
+          summary: "Pod using >85% of memory limit"
+          description: "Pod {{`{{ $labels.pod }}`}} container {{`{{ $labels.container }}`}} using {{`{{ $value | humanizePercentage }}`}} of memory limit"
+      
+      # Any Trishul pod using >95% of memory limit (OOM risk)
+      - alert: PodCriticalMemoryUsage
+        expr: |
+          (
+            container_memory_usage_bytes{pod=~"trishul-.*", container!=""}
+            /
+            on(pod, container) group_left()
+            (kube_pod_container_resource_limits{pod=~"trishul-.*", resource="memory"} > 0)
+          ) > 0.95
+        for: 2m
+        labels:
+          severity: critical
+          component: pod
+        annotations:
+          summary: "Pod using >95% of memory limit (OOM risk)"
+          description: "Pod {{`{{ $labels.pod }}`}} container {{`{{ $labels.container }}`}} using {{`{{ $value | humanizePercentage }}`}} of memory limit - OOM imminent"
+      
+      # Backend app-level CPU near pod limit
+      - alert: BackendAppCPUNearLimit
+        expr: |
+          (
+            (app_resource_cpu_current_percent / 100)
+            /
+            on() group_left()
+            kube_pod_container_resource_limits{pod=~"trishul-backend.*", container="backend", resource="cpu"}
+          ) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          component: backend
+        annotations:
+          summary: "Backend application CPU near pod limit"
+          description: "Backend app using {{`{{ $value | humanizePercentage }}`}} of pod CPU limit"
+      
+      # Backend app-level memory near pod limit
+      - alert: BackendAppMemoryNearLimit
+        expr: |
+          (
+            (app_resource_memory_current_mb * 1024 * 1024)
+            /
+            on() group_left()
+            kube_pod_container_resource_limits{pod=~"trishul-backend.*", container="backend", resource="memory"}
+          ) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          component: backend
+        annotations:
+          summary: "Backend application memory near pod limit"
+          description: "Backend app using {{`{{ $value | humanizePercentage }}`}} of pod memory limit"
+      
+      # Pod restarting
+      - alert: PodRestarting
+        expr: rate(kube_pod_container_status_restarts_total{pod=~"trishul-.*"}[15m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          component: pod
+        annotations:
+          summary: "Pod is restarting"
+          description: "Pod {{`{{ $labels.pod }}`}} container {{`{{ $labels.container }}`}} has restarted {{`{{ $value }}`}} times in last 15 minutes"
+      
+      # Pod without resource limits
+      - alert: PodMissingResourceLimits
+        expr: |
+          kube_pod_container_resource_limits{pod=~"trishul-.*", resource="memory"} == 0
+          or
+          kube_pod_container_resource_limits{pod=~"trishul-.*", resource="cpu"} == 0
+        for: 10m
+        labels:
+          severity: info
+          component: pod
+        annotations:
+          summary: "Pod missing resource limits"
+          description: "Pod {{`{{ $labels.pod }}`}} container {{`{{ $labels.container }}`}} has no {{`{{ $labels.resource }}`}} limit defined"
+
+{{- end }}

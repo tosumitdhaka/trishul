@@ -1,0 +1,165 @@
+project:
+  name: Trishul
+  version: 2.1.4
+
+database:
+  host: localhost
+  port: 3306
+  user: root
+  password_base64: ZGhha2ExMjM=
+
+  parser_db: trishul_parsed_data           
+  jobs_db: trishul_jobs_data               
+  system_db: trishul_system           
+  traps_db: trishul_traps            
+
+  pool_size: 10
+  max_overflow: 20
+  pool_timeout: 30
+  pool_recycle: 3600
+  pool_pre_ping: true
+  echo: false
+
+  max_retries: 3
+  retry_delay: 1.0
+
+  batch_insert: true
+  import_mode: replace
+  batch_size: 2000
+
+parser:
+  force_compile: false
+  compiled_dir: ./data/compiled_mibs
+
+  mib_patterns:
+  - '*.mib'
+  - '*.my'
+  - '*.txt'
+  - ''
+  mib_search_dirs:
+  - ./standard_mibs
+  - /usr/share/snmp/mibs
+  - /usr/local/share/snmp/mibs
+
+  deduplication_enabled: false
+  deduplication_strategy: smart
+
+cache:
+  enabled: true
+  directory: ./data/cache
+  ttl_hours: 720             # 7 days - auto-cleanup old cache
+  max_size_mb: 500           # Max cache size
+  cleanup_on_startup: false  # Clear all cache on app start
+
+jobs:
+  concurrency: 2
+  auto_refresh_interval: 15
+
+cleanup:
+  enabled: true
+  retention_days: 30
+  schedule_hour: 2
+  schedule_minute: 0
+  delete_data: true
+  keep_statuses: []
+  
+export:
+  export_dir: ./data/exports
+
+  # FileManager settings (REQUIRED)
+  chunk_size: 10000                      # Chunk size for streaming
+  include_timestamp: true               # Add timestamp to filenames
+  timestamp_format: '%Y%m%d_%H%M%S'      # Timestamp format "20251217_132925"
+  compression: 'null'                   # Compression type (null, gzip, zip, bz2, xz)
+
+upload:
+  upload_dir: ./data/uploads
+  max_size_mb: 100
+  max_archive_size_mb: 500
+  max_archive_entries: 10000
+  supported_extensions:
+  - .mib
+  - .txt
+  - .my
+  - ''
+  session_timeout_hours: 24
+
+logging:
+  level: INFO
+  file:
+  # file: logs/trishul.log 
+  console: true
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  max_file_size_mb: 10
+  backup_count: 5
+
+traps:
+  # Trap Sync Configs
+  sync_strategy: 'append' #'append', 'replace', 'newest'
+  skip_synced: true
+  batch_size: 1000
+
+metrics:
+  directory: ./data/metrics
+
+web:
+  host: localhost
+  port: 8000
+  cors_origins:
+  - '*'
+  api_v1_prefix: /api/v1
+
+
+# ============================================
+# UI Configuration (Frontend Settings)
+# ============================================
+ui:
+  data_table:
+    # Maximum height for inline data table (list view accordion)
+    max_height_px: 800
+
+    # Default rows per page (client-side pagination)
+    default_page_size: 50
+
+    # Available page size options
+    page_size_options:
+    - 25
+    - 50
+    - 100
+    - 500
+    - 1000
+
+    # Default DB fetch limit (server-side pagination)
+    db_fetch_limit_default: 1000
+
+    # Available DB fetch limit options
+    db_fetch_limit_options:
+    - 500
+    - 1000
+    - 2000
+    - 5000
+    - 10000
+
+    # Priority columns (shown by default if table has these columns)
+    # User can customize via column selector, saved to localStorage
+    priority_columns:
+    - notification_name
+    - notification_oid
+    - object_name
+    - object_oid
+    - node_type
+    - module_name
+    - object_status
+    - object_description
+
+    # Node type filter options (predefined quick filter)
+    node_type_options:
+    - NotificationType
+    - ObjectType
+    - TypeDefinition
+    - ModuleIdentity
+    - MibTable
+    - MibTableRow
+    - MibTableColumn
+    - MibScalar
+    - MibIdentifier

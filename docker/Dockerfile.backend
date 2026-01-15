@@ -1,0 +1,93 @@
+# ============================================
+# Multi-stage Dockerfile for Trishul Backend
+# ============================================
+
+# ============================================
+# Stage 1: Builder
+# ============================================
+FROM python:3.11-slim as builder
+
+WORKDIR /build
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    libmariadb-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# ============================================
+# Stage 2: Runtime
+# ============================================
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install runtime dependencies including SNMP tools and network utilities
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    netcat-openbsd \
+    telnet \
+    snmp \
+    snmpd \
+    libsnmp-dev \
+    libmariadb3 \
+    iputils-ping \
+    dnsutils \
+    net-tools \
+    iproute2 \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Enable non-free MIBs (comment out 'mibs :' line)
+RUN sed -i 's/^mibs :/#mibs :/' /etc/snmp/snmp.conf 2>/dev/null || true
+
+# Copy Python packages from builder
+COPY --from=builder /root/.local /root/.local
+
+# Make sure scripts in .local are usable
+ENV PATH=/root/.local/bin:$PATH
+
+# Copy application code
+COPY backend/ /app/backend/
+COPY core/ /app/core/
+COPY services/ /app/services/
+COPY utils/ /app/utils/
+COPY config/ /app/config/
+COPY standard_mibs/ /app/standard_mibs/
+
+# Set MIBDIRS to include your MIBs and system MIBs
+ENV MIBDIRS=/app/standard_mibs:/usr/share/snmp/mibs
+
+# Copy entrypoint script
+COPY docker/scripts/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+# Create directories for data
+RUN mkdir -p /app/data/uploads \
+    /app/data/compiled_mibs \
+    /app/data/cache \
+    /app/data/exports \
+    /app/data/logs \
+    /app/data/config \
+    /app/data/metrics
+
+# Expose ports
+# 8000: FastAPI
+# 1162: SNMP trap receiver (non-privileged port)
+EXPOSE 8000 1162/udp
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8000/api/v1/health || exit 1
+
+# Set entrypoint
+ENTRYPOINT ["/app/entrypoint.sh"]
+
+# Default command
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]

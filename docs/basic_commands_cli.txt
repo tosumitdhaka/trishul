@@ -1,0 +1,291 @@
+================================================================================
+                    MIB TOOL V3 - BASIC COMMANDS QUICK REFERENCE
+================================================================================
+
+SIMPLE COPY-PASTE COMMANDS FOR COMMON TASKS
+
+================================================================================
+PARSING MIB FILES
+================================================================================
+
+# Parse single MIB file to CSV
+python mib_tool.py parse IF-MIB.mib -o output.csv
+
+# Parse single MIB file to Excel
+python mib_tool.py parse IF-MIB.mib -o output.xlsx
+
+# Parse directory of MIBs
+python mib_tool.py parse ./mibs -o all_mibs.csv
+
+# Parse directory recursively (include subdirectories)
+python mib_tool.py parse ./mibs --recursive -o all_mibs.csv
+
+# Parse and save to database
+python mib_tool.py parse ./mibs --to-db mib_data
+
+# Parse with verbose output (see what's happening)
+python mib_tool.py parse IF-MIB.mib -o output.csv -v
+
+================================================================================
+FILTERING DATA
+================================================================================
+
+# Filter for specific alarms (comma-separated)
+python mib_tool.py filter input.csv -o filtered.csv --alarms "linkDown,linkUp,coldStart"
+
+# Filter using alarm list file
+python mib_tool.py filter input.csv -o filtered.csv --alarm-file alarms.txt
+
+# Filter by module
+python mib_tool.py filter input.csv -o filtered.csv --modules "IF-MIB,SNMPv2-MIB"
+
+# Filter by status (current, deprecated, obsolete)
+python mib_tool.py filter input.csv -o filtered.csv --status current
+
+# Remove duplicates (smart mode)
+python mib_tool.py filter input.csv -o clean.csv --deduplicate smart
+
+================================================================================
+DATABASE OPERATIONS
+================================================================================
+
+# Import CSV to database
+python mib_tool.py import data.csv --table my_table
+
+# Import MIBs to database
+python mib_tool.py import ./mibs --table mib_data
+
+# Export from database to CSV
+python mib_tool.py export my_table -o export.csv
+
+# Export from database to Excel
+python mib_tool.py export my_table -o export.xlsx
+
+# List all database tables
+python mib_tool.py db list
+
+# Get information about a table
+python mib_tool.py db info my_table
+
+# Search in database
+python mib_tool.py search "linkDown" --all-tables
+
+================================================================================
+IMPORT WITH FILTERING
+================================================================================
+
+# Import only specific alarms from MIBs
+python mib_tool.py import ./mibs --table filtered_data --filter "linkDown,linkUp"
+
+# Import using alarm list file
+python mib_tool.py import ./mibs --table filtered_data --filter-file alarms.csv
+
+# Import and replace existing data
+python mib_tool.py import data.csv --table my_table --mode replace
+
+# Import and append to existing data
+python mib_tool.py import data.csv --table my_table --mode append
+
+================================================================================
+ANALYSIS AND VALIDATION
+================================================================================
+
+# Analyze data quality
+python mib_tool.py analyze data.csv --metrics quality
+
+# Analyze for duplicates
+python mib_tool.py analyze data.csv --metrics duplicates
+
+# Full analysis with HTML report
+python mib_tool.py analyze data.csv --report report.html --format html
+
+# Validate data structure
+python mib_tool.py validate data.csv
+
+# Strict validation with report
+python mib_tool.py validate data.csv --strict --report validation.txt
+
+================================================================================
+WORKING WITH COMPRESSED FILES
+================================================================================
+
+# Import compressed CSV
+python mib_tool.py import data.csv.gz --table my_table
+
+# Export with compression
+python mib_tool.py export my_table -o output.csv --compress gzip
+
+# Parse compressed MIB
+python mib_tool.py parse mib_file.mib.gz -o output.csv
+
+================================================================================
+BATCH PROCESSING
+================================================================================
+
+# Create batch file (batch.yaml):
+commands:
+  - command: parse
+    source: ./mibs
+    to_db: mib_data
+  - command: filter
+    source: mib_data
+    output: filtered.csv
+    deduplicate: smart
+
+# Run batch
+python mib_tool.py batch batch.yaml
+
+# Dry run (preview without executing)
+python mib_tool.py batch batch.yaml --dry-run
+
+================================================================================
+CACHE MANAGEMENT
+================================================================================
+
+# Show cache statistics
+python mib_tool.py cache stats
+
+# Clear all cache
+python mib_tool.py cache clear --all
+
+# Clear old cache (older than 7 days)
+python mib_tool.py cache clear --older-than 7
+
+================================================================================
+COMMON WORKFLOWS
+================================================================================
+
+WORKFLOW 1: Parse MIBs and filter for specific alarms
+----------------------------------------------------
+# Step 1: Parse all MIBs
+python mib_tool.py parse ./vendor_mibs --recursive -o all_data.csv
+
+# Step 2: Filter for your alarms
+python mib_tool.py filter all_data.csv -o my_alarms.csv --alarms "linkDown,linkUp,bgpEstablished"
+
+# Step 3: Remove duplicates
+python mib_tool.py filter my_alarms.csv -o final.csv --deduplicate smart
+
+
+WORKFLOW 2: Database-based processing
+--------------------------------------
+# Step 1: Import MIBs to database
+python mib_tool.py import ./mibs --table raw_data --recursive
+
+# Step 2: Filter in database
+python mib_tool.py filter raw_data -o filtered.csv --status current
+
+# Step 3: Export final result
+python mib_tool.py export raw_data -o final_report.xlsx --format excel
+
+
+WORKFLOW 3: Quick alarm extraction
+-----------------------------------
+# One command: parse and filter
+python mib_tool.py import ./mibs --table alarms --filter "linkDown,linkUp,coldStart,warmStart"
+
+# Export results
+python mib_tool.py export alarms -o alarm_list.xlsx
+
+
+WORKFLOW 4: Multi-vendor MIB handling
+--------------------------------------
+# Parse vendor 1
+python mib_tool.py parse ./cisco_mibs --to-db cisco_data
+
+# Parse vendor 2
+python mib_tool.py parse ./juniper_mibs --to-db juniper_data
+
+# Combine and deduplicate (keep one per vendor)
+python mib_tool.py filter cisco_data -o combined.csv --deduplicate keep_all_modules
+
+
+WORKFLOW 5: Quality check before production
+--------------------------------------------
+# Step 1: Parse MIBs
+python mib_tool.py parse ./new_mibs -o new_data.csv
+
+# Step 2: Validate
+python mib_tool.py validate new_data.csv --strict
+
+# Step 3: Analyze quality
+python mib_tool.py analyze new_data.csv --metrics quality
+
+# Step 4: If good, import to production
+python mib_tool.py import new_data.csv --table production
+
+================================================================================
+ALARM LIST FILE FORMAT
+================================================================================
+
+Create a text file (alarms.txt or alarms.csv) with one alarm per line:
+
+linkDown
+linkUp
+coldStart
+warmStart
+authenticationFailure
+bgpEstablished
+bgpBackwardTransition
+ospfNbrStateChange
+ospfIfStateChange
+
+Then use: --alarm-file alarms.txt
+
+================================================================================
+HELP AND DEBUGGING
+================================================================================
+
+# Get general help
+python mib_tool.py --help
+
+# Get help for specific command
+python mib_tool.py parse --help
+python mib_tool.py filter --help
+python mib_tool.py import --help
+
+# Run with verbose output
+python mib_tool.py parse IF-MIB.mib -o output.csv -v
+
+# Run with debug output
+python mib_tool.py parse IF-MIB.mib -o output.csv -vvv
+
+# Check version
+python mib_tool.py --version
+
+================================================================================
+QUICK TIPS
+================================================================================
+
+1. Always use --recursive when parsing directories with subdirectories
+2. Use -v flag to see progress for long operations
+3. Use --deduplicate smart to automatically remove duplicates
+4. Create alarm list files for consistent filtering
+5. Use database for large datasets (better performance)
+6. Export to Excel for easy sharing with non-technical users
+7. Use compression for large exports (--compress gzip)
+8. Run validation before importing to production
+9. Use batch files for repetitive tasks
+10. Clear cache if you encounter parsing issues
+
+================================================================================
+ERROR FIXES
+================================================================================
+
+# If "Module not found" error:
+pip install pysnmp pysmi pandas sqlalchemy pymysql pyyaml
+
+# If database connection fails:
+python mib_tool.py parse IF-MIB.mib -o output.csv --no-db
+
+# If out of memory:
+python mib_tool.py parse ./mibs --to-db temp_table
+(Use database instead of memory)
+
+# If MIB parsing fails:
+python mib_tool.py cache clear --all
+python mib_tool.py parse IF-MIB.mib --force -vvv
+
+================================================================================
+END OF BASIC COMMANDS REFERENCE
+================================================================================

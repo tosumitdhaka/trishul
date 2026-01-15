@@ -1,0 +1,667 @@
+/* ============================================
+   Parser Component Styles - Refined v2.1
+   ============================================ */
+
+/* ============================================
+   Step 1: Input Type Selector (REDESIGNED)
+   ============================================ */
+
+.input-type-selector-large {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+}
+
+.selector-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-md) 0;
+    text-align: center;
+}
+
+.input-type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--spacing-sm);
+}
+
+.input-type-card {
+    cursor: pointer;
+    position: relative;
+}
+
+.input-type-card input[type='radio'] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ✅ REDESIGNED: Horizontal compact layout */
+.type-card-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-background);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: var(--transition-all);
+    min-height: 60px;
+}
+
+.input-type-card:hover .type-card-content {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.input-type-card input[type='radio']:checked + .type-card-content {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+    box-shadow: var(--shadow-focus);
+}
+
+/* ✅ REDESIGNED: Smaller icon on left */
+.type-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    color: var(--color-primary);
+    stroke-width: 1.5;
+}
+
+.input-type-card input[type='radio']:checked + .type-card-content .type-icon {
+    color: var(--color-primary);
+    animation: iconPulse 0.5s ease-out;
+}
+
+@keyframes iconPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ✅ REDESIGNED: Text content on right */
+.type-text-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.type-name {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    line-height: 1.2;
+}
+
+.type-hint {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    line-height: 1.2;
+}
+
+/* ============================================
+   Step 2: Upload Area (REDUCED HEIGHT)
+   ============================================ */
+
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+/* ✅ REDUCED: Height decreased by ~35% */
+.upload-area {
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl) var(--spacing-lg);
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition-all);
+    background: var(--color-surface);
+    position: relative;
+}
+
+.upload-area:hover:not(.upload-disabled) {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+    transform: scale(1.01);
+}
+
+.upload-area.dragover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+    transform: scale(1.02);
+    box-shadow: var(--shadow-lg);
+}
+
+.upload-area.upload-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ✅ REDUCED: Smaller icon */
+.upload-icon {
+    width: 48px;
+    height: 48px;
+    color: var(--color-text-secondary);
+    margin: 0 auto var(--spacing-md);
+    stroke-width: 1.5;
+}
+
+.upload-text {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.upload-hint {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.upload-formats {
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-xs);
+    margin: 0;
+}
+
+/* Text Input Area */
+.text-input-area {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-textarea {
+    width: 100%;
+    min-height: 300px;
+    padding: var(--spacing-md);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-text);
+    resize: vertical;
+    transition: var(--transition-all);
+}
+
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus);
+}
+
+/* ============================================
+   Step 3: Selected Files List
+   ============================================ */
+
+.selected-files {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 1000px;
+    }
+}
+
+.selected-files-list {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.list-header-title {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+}
+
+/* ✅ STYLED: Clear All button with red bold text */
+#clearFilesBtn {
+    color: var(--color-danger);
+    font-weight: var(--font-weight-bold);
+    background: transparent;
+    border: 1px solid var(--color-danger);
+}
+
+#clearFilesBtn:hover {
+    background: var(--color-danger);
+    color: var(--color-text-inverse);
+}
+
+.list-body {
+    max-height: 300px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+/* Custom scrollbar */
+.list-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.list-body::-webkit-scrollbar-track {
+    background: var(--color-background);
+    border-radius: var(--radius-sm);
+}
+
+.list-body::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: var(--radius-sm);
+}
+
+.list-body::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-tertiary);
+}
+
+.file-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-sm);
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: var(--transition-all);
+}
+
+.file-list-item:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.file-item-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex: 1;
+    min-width: 0;
+}
+
+.file-item-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--color-primary);
+}
+
+.file-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.file-item-name {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-item-size {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+}
+
+/* ✅ FIXED: Remove file button always visible */
+.remove-file-btn {
+    opacity: 1;  /* ✅ CHANGED: Was 0.5, now always visible */
+    transition: var(--transition-all);
+    color: var(--color-warning);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.remove-file-btn:hover {
+    background: var(--color-warning-light);
+    transform: scale(1.1);
+}
+
+.remove-file-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+}
+
+/* ============================================
+   Step 4: Parse Options Row (ENLARGED CONTROLS)
+   ============================================ */
+
+.parse-options-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    flex-wrap: wrap;
+    justify-content: flex-end;  /* ✅ ADDED: Align to right */
+}
+
+.parse-option-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.parse-option-grow {
+    flex: 1;
+    min-width: 180px;
+    /* max-width: 400px; */
+}
+
+/* ✅ NEW: Push parse button to the right */
+.parse-option-group:last-child {
+    margin-left: auto;
+}
+
+/* ✅ ENLARGED: Checkbox */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.checkbox-label input[type='checkbox'] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.checkbox-label span {
+    color: var(--color-text);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+}
+
+/* ✅ ENLARGED: Select dropdown */
+.select-label-inline {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    white-space: nowrap;
+}
+
+.select-label-inline span {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+}
+
+.form-select-inline {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-background);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: var(--transition-all);
+    min-width: 140px;
+}
+
+.form-select-inline:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus);
+}
+
+/* ✅ ENLARGED: Input label and textbox */
+.input-label-inline {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex: 1;
+}
+
+.input-label-inline span {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    white-space: nowrap;
+}
+
+.form-input-inline {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-background);
+    color: var(--color-text);
+    transition: var(--transition-all);
+}
+
+.form-input-inline:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus);
+}
+
+.form-input-inline::placeholder {
+    color: var(--color-text-tertiary);
+}
+
+/* ✅ ENLARGED: Parse Button */
+.btn-lg {
+    padding: var(--spacing-md) var(--spacing-2xl);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+}
+
+/* ============================================
+   Upload Progress
+   ============================================ */
+
+.upload-progress-container {
+    text-align: center;
+}
+
+.upload-progress-title {
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-base);
+    color: var(--color-text-inverse);
+}
+
+.upload-progress-bar-container {
+    width: 300px;
+    height: 4px;
+    margin: 0 auto;
+    background: var(--color-surface);
+    opacity: 0.3;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.upload-progress-bar-fill {
+    height: 100%;
+    background: var(--color-text-inverse);
+    transition: width var(--transition-base);
+}
+
+.upload-progress-stats {
+    margin-top: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-inverse);
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .input-type-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .parse-options-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .parse-option-group {
+        width: 100%;
+    }
+
+    .parse-option-grow {
+        max-width: none;
+    }
+
+    .input-label-inline {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .input-label-inline span {
+        margin-bottom: var(--spacing-xs);
+    }
+}
+
+@media (max-width: 768px) {
+    .input-type-selector-large {
+        padding: var(--spacing-lg);
+    }
+
+    .input-type-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .type-card-content {
+        min-height: 50px;
+    }
+
+    .type-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .upload-area {
+        padding: var(--spacing-lg);
+    }
+
+    .upload-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .list-body {
+        max-height: 200px;
+    }
+
+    .file-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+
+    .remove-file-btn {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .selector-title {
+        font-size: var(--font-size-lg);
+    }
+
+    .type-name {
+        font-size: var(--font-size-sm);
+    }
+
+    .upload-text {
+        font-size: var(--font-size-base);
+    }
+
+    .parse-options-row {
+        padding: var(--spacing-md);
+    }
+
+    .btn-lg {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .checkbox-label span,
+    .select-label-inline span,
+    .input-label-inline span {
+        font-size: var(--font-size-sm);
+    }
+
+    .form-select-inline,
+    .form-input-inline {
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* ============================================
+   Dark Theme Support
+   ============================================ */
+
+[data-theme='dark'] .input-type-selector-large,
+[data-theme='dark'] .upload-area,
+[data-theme='dark'] .selected-files-list,
+[data-theme='dark'] .parse-options-row {
+    background: var(--color-surface);
+}
+
+[data-theme='dark'] .type-card-content {
+    background: var(--color-background);
+}
+
+[data-theme='dark'] .file-list-item {
+    background: var(--color-background);
+}
+
+[data-theme='dark'] .form-select-inline,
+[data-theme='dark'] .form-input-inline {
+    background: var(--color-background);
+}

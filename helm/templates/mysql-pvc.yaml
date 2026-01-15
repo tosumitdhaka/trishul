@@ -1,0 +1,21 @@
+{{- if .Values.persistence.mysql.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "trishul.fullname" . }}-mysql-data
+  labels:
+    {{- include "trishul.mysql.labels" . | nindent 4 }}
+  {{- with .Values.persistence.mysql.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+    - {{ .Values.persistence.mysql.accessMode }}
+  {{- if .Values.persistence.mysql.storageClass }}
+  storageClassName: {{ .Values.persistence.mysql.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.mysql.size }}
+{{- end }}

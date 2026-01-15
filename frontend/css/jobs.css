@@ -1,0 +1,1258 @@
+/* ============================================
+   Jobs Component Styles - Optimized v2.0
+   ============================================ */
+
+/* Statistics Cards */
+.jobs-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.stat-card {
+    background: var(--color-background);  /* ✅ FIXED: Was white */
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    text-align: center;
+    transition: var(--transition-all);
+}
+
+.stat-card:hover {
+    box-shadow: var(--shadow-md);  /* ✅ FIXED: Was hardcoded */
+    transform: translateY(-2px);
+}
+
+.stat-value {
+    font-size: var(--font-size-3xl);  /* ✅ FIXED: Was 2rem */
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+}
+
+.stat-label {
+    font-size: var(--font-size-sm);  /* ✅ FIXED: Was 0.875rem */
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-card.stat-running .stat-value {
+    color: var(--color-info);  /* ✅ FIXED: Was #2196f3 */
+}
+.stat-card.stat-completed .stat-value {
+    color: var(--color-success);  /* ✅ FIXED: Was #4caf50 */
+}
+.stat-card.stat-failed .stat-value {
+    color: var(--color-danger);  /* ✅ FIXED: Was #f44336 */
+}
+
+/* ============================================
+   LIST VIEW
+   ============================================ */
+
+.jobs-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.job-list-item {
+    background: var(--color-background);  /* ✅ FIXED: Was white */
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: var(--transition-all);
+}
+
+.job-list-item:hover {
+    box-shadow: var(--shadow-sm);  /* ✅ FIXED: Was hardcoded */
+    border-color: var(--color-primary);
+}
+
+.job-list-item.job-status-queued::before {
+    background: var(--color-warning);  /* ✅ FIXED: Was #ff9800 */
+}
+.job-list-item.job-status-running::before {
+    background: var(--color-info);  /* ✅ FIXED: Was #2196f3 */
+}
+.job-list-item.job-status-completed::before {
+    background: var(--color-success);  /* ✅ FIXED: Was #4caf50 */
+}
+.job-list-item.job-status-failed::before {
+    background: var(--color-danger);  /* ✅ FIXED: Was #f44336 */
+}
+
+.job-list-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.job-list-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-xl);
+    flex-shrink: 0;
+}
+
+.job-list-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.job-list-title {
+    font-size: var(--font-size-base);  /* ✅ FIXED: Was 1rem */
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.job-list-meta {
+    font-size: var(--font-size-sm);  /* ✅ FIXED: Was 0.8125rem */
+    color: var(--color-text-secondary);
+}
+
+.job-list-status {
+    flex-shrink: 0;
+}
+
+.job-list-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-shrink: 0;
+}
+
+/* Progress */
+.job-list-progress {
+    padding: 0 var(--spacing-lg) var(--spacing-md) var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.progress-bar-container {
+    height: 6px;
+    background: var(--color-surface);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: var(--font-size-sm);  /* ✅ FIXED: Was 0.8125rem */
+    color: var(--color-text-secondary);
+}
+
+/* Error */
+.job-list-error {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: var(--color-danger-bg);  /* ✅ FIXED: Was #ffebee */
+    border-top: 1px solid var(--color-danger-light);
+}
+
+.icon-error {
+    width: 18px;
+    height: 18px;
+    color: var(--color-danger);  /* ✅ FIXED: Was #f44336 */
+    flex-shrink: 0;
+}
+
+/* Expanded Details */
+.job-list-details {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 500px;
+    }
+}
+
+.job-list-actions-expanded {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    margin-top: var(--spacing-md);
+}
+
+/* Status Badge */
+.status-badge {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);  /* ✅ FIXED: Was 0.75rem */
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.status-queued {
+    background: var(--color-warning-bg);  /* ✅ FIXED: Was #fff3e0 */
+    color: var(--color-warning);  /* ✅ FIXED: Was #f57c00 */
+}
+.status-badge.status-running {
+    background: var(--color-info-bg);  /* ✅ FIXED: Was #e3f2fd */
+    color: var(--color-info);  /* ✅ FIXED: Was #1976d2 */
+}
+.status-badge.status-completed {
+    background: var(--color-success-bg);  /* ✅ FIXED: Was #e8f5e9 */
+    color: var(--color-success);  /* ✅ FIXED: Was #388e3c */
+}
+.status-badge.status-failed {
+    background: var(--color-danger-bg);  /* ✅ FIXED: Was #ffebee */
+    color: var(--color-danger);  /* ✅ FIXED: Was #c62828 */
+}
+.status-badge.status-cancelled {
+    background: var(--color-gray-100);
+    color: var(--color-gray-600);
+}
+
+/* Job Actions */
+.job-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    margin-top: var(--spacing-md);
+}
+
+/* ============================================
+   DATA VIEW CONTAINER
+   ============================================ */
+
+.data-view-container {
+    background: var(--color-background);  /* ✅ FIXED: Was white */
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.data-view-header {
+    padding: var(--spacing-lg);
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .jobs-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .job-list-header {
+        flex-wrap: wrap;
+    }
+    
+    .job-list-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .job-list-actions-expanded,
+    .job-actions {
+        flex-direction: column;
+    }
+}
+
+/* Dark Theme */
+[data-theme='dark'] .job-list-item,
+[data-theme='dark'] .data-view-container,
+[data-theme='dark'] .stat-card {
+    background: var(--color-surface);
+}
+
+/* ============================================
+   Expand/Collapse Button
+   ============================================ */
+
+.btn-icon.job-expand-btn,
+.btn-icon.table-expand-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition-all);
+}
+
+.btn-icon.job-expand-btn:hover,
+.btn-icon.table-expand-btn:hover {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+}
+
+.btn-icon.job-expand-btn svg,
+.btn-icon.table-expand-btn svg {
+    width: 16px;
+    height: 16px;
+    color: var(--color-text);
+}
+
+[data-theme='dark'] .btn-icon.job-expand-btn,
+[data-theme='dark'] .btn-icon.table-expand-btn {
+    background: var(--color-background);
+}
+
+[data-theme='dark'] .btn-icon.job-expand-btn:hover,
+[data-theme='dark'] .btn-icon.table-expand-btn:hover {
+    background: var(--color-surface);
+}
+
+/* ============================================
+   Filter Controls
+   ============================================ */
+
+.jobs-filter-controls {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+    margin-right: auto;
+}
+
+.filter-select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: border-color var(--transition-base);
+}
+
+.filter-select:hover {
+    border-color: var(--color-primary);
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus);
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: var(--spacing-sm);
+    width: 18px;
+    height: 18px;
+    color: var(--color-text-secondary);
+    pointer-events: none;
+}
+
+.search-input {
+    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) 36px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+    width: 250px;
+    transition: var(--transition-all);
+}
+
+.search-input:hover {
+    border-color: var(--color-primary);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus);
+    width: 300px;
+}
+
+.search-input::placeholder {
+    color: var(--color-text-tertiary);
+}
+
+/* ============================================
+   Phase Progress
+   ============================================ */
+
+.phase-progress {
+    padding: var(--spacing-md);
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    margin-top: var(--spacing-sm);
+}
+
+.phase-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.phase-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    position: relative;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.phase-step.active,
+.phase-step.complete {
+    opacity: 1;
+}
+
+.phase-step::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--color-border);
+    z-index: -1;
+}
+
+.phase-step:last-child::after {
+    display: none;
+}
+
+.phase-step.complete::after {
+    background: var(--color-success);
+}
+
+.phase-icon {
+    font-size: var(--font-size-2xl);
+    transition: transform 0.3s ease;
+}
+
+.phase-step.active .phase-icon {
+    transform: scale(1.2);
+    animation: pulse 2s infinite;
+}
+
+.phase-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+}
+
+.phase-step.active .phase-label {
+    color: var(--color-text);
+    font-weight: var(--font-weight-semibold);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1.2);
+    }
+    50% {
+        transform: scale(1.3);
+    }
+}
+
+/* ============================================
+   ETA Display
+   ============================================ */
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-xs);
+}
+
+.job-eta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.job-eta .icon-sm {
+    width: 16px;
+    height: 16px;
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+.job-list-item {
+    transition: var(--transition-all);
+}
+
+.job-list-item:hover {
+    transform: translateY(-2px);
+}
+
+.progress-bar-fill {
+    transition: width 0.5s ease, background-color 0.3s ease;
+}
+
+.status-badge.status-running {
+    animation: statusPulse 2s infinite;
+}
+
+@keyframes statusPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--color-border);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   Empty State
+   ============================================ */
+
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-xl);
+}
+
+.empty-icon {
+    width: 64px;
+    height: 64px;
+    color: var(--color-text-tertiary);
+    margin-bottom: var(--spacing-md);
+}
+
+.empty-message {
+    font-size: var(--font-size-lg);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-sm);
+}
+
+.empty-hint {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+/* ============================================
+   Performance Metrics (Expanded View)
+   ============================================ */
+
+.expanded-performance {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+}
+
+.performance-title {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.section-icon {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: var(--spacing-xs);
+}
+
+.performance-grid-compact {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.performance-metric {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.metric-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.metric-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+}
+
+.metric-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.metric-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+}
+
+.metric-value {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+    line-height: 1;
+}
+
+.time-breakdown {
+    margin-top: var(--spacing-md);
+}
+
+.breakdown-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.breakdown-bar-compact {
+    display: flex;
+    height: 24px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: var(--spacing-xs);
+}
+
+.breakdown-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    transition: opacity var(--transition-base);
+}
+
+.breakdown-segment:hover {
+    opacity: 0.8;
+    cursor: help;
+}
+
+.breakdown-legend-compact {
+    display: flex;
+    gap: var(--spacing-md);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    justify-content: center;
+}
+
+.breakdown-legend-compact span {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.error-value {
+    color: var(--color-danger);
+    font-weight: var(--font-weight-semibold);
+}
+
+.highlight-value {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    font-size: var(--font-size-lg);
+}
+
+/* ============================================
+   Detail Grid
+   ============================================ */
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.detail-label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+}
+
+.detail-value code {
+    background: var(--color-surface);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+}
+
+/* ============================================
+   Job Summary Stats
+   ============================================ */
+
+.job-list-summary {
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--color-border);
+}
+
+.summary-stats {
+    display: flex;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.summary-stat {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.stat-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--color-primary);
+}
+
+/* ============================================
+   HYBRID PROGRESS - Collapsed (Simple)
+   ============================================ */
+
+.job-list-progress-collapsed {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.progress-bar-container-collapsed {
+    flex: 1;
+    height: 6px;
+    background: var(--color-surface);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.progress-info-collapsed {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+}
+
+.progress-percentage {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+}
+
+/* ============================================
+   HYBRID PROGRESS - Expanded (Detailed)
+   ============================================ */
+
+.job-list-progress-expanded {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.progress-bar-container-expanded {
+    height: 8px;
+    background: var(--color-surface);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.progress-info-expanded {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-message {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+    .job-list-progress-collapsed {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-xs);
+    }
+
+    .progress-info-collapsed {
+        justify-content: space-between;
+    }
+}
+
+/* Performance breakdown */
+
+.phase-breakdown-section {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+}
+
+.breakdown-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-md) 0;
+}
+
+.breakdown-segment span {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   Failed Files & Missing Dependencies
+   ============================================ */
+
+/* Warning badge in collapsed mode */
+.job-warning-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--color-warning-bg);
+    border: 1px solid var(--color-warning);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    color: var(--color-warning-dark);
+    white-space: nowrap;
+    transition: var(--transition-all);
+}
+
+/* Make it clickable */
+.job-warning-badge.clickable {
+    cursor: pointer;
+}
+
+.job-warning-badge.clickable:hover {
+    background: var(--color-warning);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.job-warning-badge.clickable:active {
+    transform: translateY(0);
+}
+
+.icon-warning-sm {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+/* Detail value with toggle button */
+.detail-value-with-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.warning-value {
+    color: var(--color-warning);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* Toggle button (eye icon) */
+.btn-toggle-details {
+    padding: var(--spacing-xs);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition-all);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-toggle-details:hover {
+    background: var(--color-surface);
+    border-color: var(--color-primary);
+}
+
+.icon-eye {
+    width: 16px;
+    height: 16px;
+    color: var(--color-text-secondary);
+}
+
+.btn-toggle-details:hover .icon-eye {
+    color: var(--color-primary);
+}
+
+/* ============================================
+   Issues Modal - Simplified
+   ============================================ */
+
+.issues-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+/* Modal Header */
+.issues-modal-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.issues-modal-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.issues-modal-icon.error {
+    background: var(--color-danger-bg);
+    color: var(--color-danger);
+}
+
+.issues-modal-icon.warning {
+    background: var(--color-warning-bg);
+    color: var(--color-warning);
+}
+
+.issues-modal-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+}
+
+.issues-modal-title {
+    flex: 1;
+}
+
+.issues-modal-title h3 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.issues-modal-title p {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
+/* ============================================
+   Failed Files Table
+   ============================================ */
+
+.issues-table-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.issues-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.issues-table thead {
+    position: sticky;
+    top: 0;
+    background: var(--color-surface);
+    z-index: 1;
+}
+
+.issues-table th {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.issues-table tbody tr {
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color 0.2s;
+}
+
+.issues-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.issues-table tbody tr:hover {
+    background: var(--color-surface);
+}
+
+.issues-table td {
+    padding: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    vertical-align: top;
+}
+
+.file-name-cell {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.icon-file-sm {
+    width: 16px;
+    height: 16px;
+    color: var(--color-text-tertiary);
+    flex-shrink: 0;
+}
+
+.file-name-cell code {
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    word-break: break-word;
+}
+
+.error-text {
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+/* Custom scrollbar for table */
+.issues-table-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.issues-table-container::-webkit-scrollbar-track {
+    background: var(--color-surface);
+}
+
+.issues-table-container::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: var(--radius-sm);
+}
+
+.issues-table-container::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-tertiary);
+}
+
+/* ============================================
+   Missing Dependencies Grid
+   ============================================ */
+
+.deps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    max-height: 400px;
+    overflow-y: auto;
+    padding: var(--spacing-xs);
+}
+
+.dep-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: var(--transition-all);
+}
+
+.dep-badge:hover {
+    border-color: var(--color-warning);
+    background: var(--color-warning-bg);
+}
+
+.icon-package-sm {
+    width: 16px;
+    height: 16px;
+    color: var(--color-warning);
+    flex-shrink: 0;
+}
+
+.dep-badge code {
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    word-break: break-word;
+}
+
+/* Custom scrollbar for deps grid */
+.deps-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.deps-grid::-webkit-scrollbar-track {
+    background: var(--color-surface);
+    border-radius: var(--radius-sm);
+}
+
+.deps-grid::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: var(--radius-sm);
+}
+
+.deps-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-tertiary);
+}
+
+/* Modal Footer */
+.issues-modal-footer {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background: var(--color-info-bg);
+    border: 1px solid var(--color-info);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
+.icon-info {
+    width: 18px;
+    height: 18px;
+    color: var(--color-info);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Dark theme adjustments */
+[data-theme='dark'] .issues-table thead {
+    background: var(--color-background);
+}
+
+[data-theme='dark'] .issues-table tbody tr:hover {
+    background: var(--color-background);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .issues-modal-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .issues-table-container {
+        max-height: 300px;
+    }
+    
+    .issues-table th:first-child,
+    .issues-table td:first-child {
+        width: 40%;
+    }
+    
+    .deps-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        max-height: 300px;
+    }
+}

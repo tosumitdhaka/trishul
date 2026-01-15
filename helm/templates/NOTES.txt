@@ -1,0 +1,140 @@
+============================================
+🎉 Trishul has been deployed successfully!
+============================================
+
+Release Name: {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+Version: {{ .Chart.AppVersion }}
+
+============================================
+📋 Access Information
+============================================
+
+{{- if eq .Values.service.frontend.type "NodePort" }}
+
+1. Frontend (Web UI):
+   Get the node IP and access the application:
+   
+   export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+   echo "Frontend URL: http://$NODE_IP:{{ .Values.service.frontend.nodePort }}"
+
+2. API Documentation:
+   echo "API Docs: http://$NODE_IP:{{ .Values.service.frontend.nodePort }}/docs"
+
+3. SNMP Trap Receiver:
+   Send traps to: $NODE_IP:{{ .Values.service.backend.trapNodePort }} (UDP)
+
+{{- else if eq .Values.service.frontend.type "LoadBalancer" }}
+
+1. Frontend (Web UI):
+   Get the LoadBalancer IP:
+   
+   export SERVICE_IP=$(kubectl get svc {{ include "trishul.fullname" . }}-frontend -n {{ .Release.Namespace }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+   echo "Frontend URL: http://$SERVICE_IP"
+
+2. API Documentation:
+   echo "API Docs: http://$SERVICE_IP/docs"
+
+{{- end }}
+
+============================================
+🔍 Useful Commands
+============================================
+
+# Check pod status
+kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+# View backend logs
+kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/component=backend -f
+
+# View frontend logs
+kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/component=frontend -f
+
+# View MySQL logs
+kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/component=mysql -f
+
+# Check services
+kubectl get svc -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+# Check PVCs
+kubectl get pvc -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+# Port forward (alternative access method)
+kubectl port-forward -n {{ .Release.Namespace }} svc/{{ include "trishul.fullname" . }}-frontend 8080:80
+
+============================================
+⚙️  Configuration
+============================================
+
+{{- if .Values.persistence.backend.enabled }}
+✅ Backend data persistence: ENABLED ({{ .Values.persistence.backend.size }})
+{{- else }}
+⚠️  Backend data persistence: DISABLED (data will be lost on pod restart)
+{{- end }}
+
+{{- if .Values.persistence.mysql.enabled }}
+✅ MySQL data persistence: ENABLED ({{ .Values.persistence.mysql.size }})
+{{- else }}
+⚠️  MySQL data persistence: DISABLED (data will be lost on pod restart)
+{{- end }}
+
+{{- if .Values.hostNetwork }}
+⚠️  Host network: ENABLED (pod uses host network namespace)
+{{- end }}
+
+Database: MySQL {{ .Values.image.mysql.tag }}
+Backend replicas: {{ .Values.replicas.backend }}
+Frontend replicas: {{ .Values.replicas.frontend }}
+
+============================================
+🔧 Customization
+============================================
+
+To customize the deployment, create a custom values file:
+
+  helm upgrade {{ .Release.Name }} ./trishul-helm -f custom-values.yaml
+
+Example custom-values.yaml:
+  
+  config:
+    jobs:
+      concurrency: 4
+    cache:
+      ttl_hours: 168
+  
+  resources:
+    backend:
+      limits:
+        memory: "4Gi"
+        cpu: "4000m"
+
+============================================
+📚 Documentation
+============================================
+
+For more information, see:
+- README: ./trishul-helm/README.md
+- Docker Guide: ./README-DOCKER.md
+- Kubernetes Guide: ./README-KUBERNETES.md
+
+============================================
+🆘 Troubleshooting
+============================================
+
+If pods are not starting:
+
+1. Check pod events:
+   kubectl describe pod -n {{ .Release.Namespace }} <pod-name>
+
+2. Check if PVCs are bound:
+   kubectl get pvc -n {{ .Release.Namespace }}
+
+3. Verify MySQL is ready:
+   kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/component=mysql
+
+4. Check backend initialization:
+   kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/component=backend
+
+For support, contact the Trishul team.
+
+============================================

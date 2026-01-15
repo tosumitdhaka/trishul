@@ -1,0 +1,84 @@
+{{- if and .Values.monitoring.enabled .Values.monitoring.alertmanager.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "trishul.fullname" . }}-alertmanager-config
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+data:
+  alertmanager.yml: |
+    {{- toYaml .Values.monitoring.alertmanager.config | nindent 4 }}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trishul.fullname" . }}-alertmanager
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+    app.kubernetes.io/component: alertmanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "trishul.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: alertmanager
+  template:
+    metadata:
+      labels:
+        {{- include "trishul.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: alertmanager
+    spec:
+      containers:
+      - name: alertmanager
+        image: prom/alertmanager:v0.26.0
+        args:
+        - '--config.file=/etc/alertmanager/alertmanager.yml'
+        - '--storage.path=/alertmanager'
+        - '--data.retention={{ .Values.monitoring.alertmanager.retention }}'
+        ports:
+        - name: web
+          containerPort: 9093
+        volumeMounts:
+        - name: config
+          mountPath: /etc/alertmanager
+        - name: data
+          mountPath: /alertmanager
+        resources:
+          {{- toYaml .Values.monitoring.alertmanager.resources | nindent 10 }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "trishul.fullname" . }}-alertmanager-config
+      - name: data
+        emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trishul.fullname" . }}-alertmanager
+  labels:
+    {{- include "trishul.labels" . | nindent 4 }}
+    app.kubernetes.io/component: alertmanager
+spec:
+  type: {{ .Values.monitoring.alertmanager.service.type }}
+  {{- if eq .Values.monitoring.alertmanager.service.type "NodePort" }}
+  ports:
+  - name: web
+    port: 9093
+    targetPort: 9093
+    nodePort: {{ .Values.monitoring.alertmanager.service.nodePort }}
+    protocol: TCP
+  {{- else }}
+  ports:
+  - name: web
+    port: 9093
+    targetPort: 9093
+    protocol: TCP
+  {{- end }}
+  selector:
+    {{- include "trishul.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: alertmanager
+{{- end }}
