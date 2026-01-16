@@ -38,26 +38,9 @@ env/
 .DS_Store
 
 # Project specific
-cache/*
-!cache/.gitkeep
 logs/*
-!logs/.gitkeep
-compiled_mibs/*
-web/compiled_mibs/*
-web/compiled_mibs
-web/cache/*
-!compiled_mibs/.gitkeep
-exports/*
-!exports/.gitkeep
-*.cache
 *.log
-*.db
-*.sqlite
-standard_mibs/*
 data/*
-
-# Configuration (keep sample only)
-!config/config.yaml
 
 # Test coverage
 htmlcov/
@@ -80,6 +63,7 @@ docs/_templates/
 *.tmp
 *.bak
 *.backup
+*.backup*
 .~*
 
 # Database
@@ -93,8 +77,4 @@ docs/_templates/
 passwords.txt
 credentials.json
 
-# Markdown files (as per requirement)
-*.md
-*.markdown
-uploads/*
 
