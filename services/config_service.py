@@ -49,7 +49,7 @@ def init_dataclass_from_dict(dataclass_type, config_dict: Dict[str, Any]):
 class ProjectConfig:
     """Project configuration."""
     name: str = "Trishul"
-    version: str = "1.3.0"
+    version: str = "2.1.0"
 
 @dataclass
 class DatabaseConfig:
@@ -270,6 +270,7 @@ class Config:
         """Find configuration file in standard locations."""
         search_paths = [
             Path("./config/config.yaml"),
+            Path("app/config/config.yaml"),
             Path("./config.yaml"),
             Path("../config/config.yaml")
         ]
