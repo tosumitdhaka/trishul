@@ -54,7 +54,7 @@ class ProjectConfig:
 @dataclass
 class DatabaseConfig:
     """Database configuration."""
-    host: str = "localhost"
+    host: str = "trishul-mysql"
     port: int = 3306
     user: str = "root"
     password: str = ""
@@ -86,7 +86,7 @@ class DatabaseConfig:
 @dataclass
 class ParserConfig:
     """Parser configuration."""
-    compiled_dir: str = "./compiled_mibs"
+    compiled_dir: str = "./data/compiled_mibs"
     mib_search_dirs: List[str] = field(default_factory=list)
     mib_patterns: List[str] = field(default_factory=lambda: ["", ".mib", ".txt", ".my"])
     force_compile: bool = False
@@ -98,7 +98,7 @@ class ParserConfig:
 class CacheConfig:
     """Cache configuration."""
     enabled: bool = True
-    directory: str = "./cache"
+    directory: str = "./data/cache"
     ttl_hours: int = 168  # 7 days
     max_size_mb: int = 500
     cleanup_on_startup: bool = False
@@ -122,7 +122,7 @@ class CleanupConfig:
 @dataclass
 class ExportConfig:
     """Export configuration."""
-    export_dir: str = "./exports"
+    export_dir: str = "./data/exports"
 
     chunk_size: int = 10000
     include_timestamp: bool = False
@@ -132,8 +132,8 @@ class ExportConfig:
 @dataclass
 class UploadConfig:
     """Upload configuration."""
-    upload_dir: str = "uploads"
-    temp_dir: str = "temp"
+    upload_dir: str = "./data/uploads"
+    temp_dir: str = "./data/temp"
     max_size_mb: int = 100
     max_archive_size_mb: int = 500
     max_archive_entries: int = 10000
@@ -142,8 +142,8 @@ class UploadConfig:
 
 @dataclass
 class MetricsConfig:
-    """Export configuration."""
-    directory: str = "./metrics"
+    """Metrics configuration."""
+    directory: str = "./data/metrics"
     retention_days: int = 7
     flush_interval_sec: int = 60
     monitor_interval: int = 5
@@ -178,6 +178,11 @@ class UIConfig:
     """UI configuration."""
     data_table: Dict[str, Any] = field(default_factory=dict)
 
+@dataclass
+class ExternalLinksConfig:
+    """External links configuration."""
+    data_table: Dict[str, Any] = field(default_factory=dict)
+
 
 class Config:
     """Centralized configuration management."""
@@ -205,6 +210,7 @@ class Config:
         self.logging = self._init_logging_config()
         self.web = self._init_web_config()
         self.ui = self._init_ui_config()
+        self.externallinks = self._init_externallinks_config()
 
         # Version
         self.version = self.project.version
@@ -244,6 +250,7 @@ class Config:
             self.logging = self._init_logging_config()
             self.web = self._init_web_config()
             self.ui = self._init_ui_config()
+            self.externallinks = self._init_externallinks_config()
             
             # Update version
             self.version = self.project.version
@@ -389,6 +396,10 @@ class Config:
     def _init_ui_config(self) -> UIConfig:
         """Initialize UI configuration."""
         return init_dataclass_from_dict(UIConfig, self.raw_config.get("ui", {}))
+
+    def _init_externallinks_config(self) -> ExternalLinksConfig:
+        """Initialize external links configuration."""
+        return init_dataclass_from_dict(ExternalLinksConfig, self.raw_config.get("external_links", {}))
 
     def _create_directories(self):
         """Create required directories if they don't exist."""

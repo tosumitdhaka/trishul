@@ -169,25 +169,25 @@ ui:
 
 # External Links (CNF deployment only)
 # Remove or comment out for standalone deployments
-#external_links:
-#  prometheus:
-#    enabled: true
+external_links:
+  prometheus:
+    enabled: false
 #    url: "http://localhost:30090"  # Your Prometheus NodePort URL
 #    label: "Prometheus"
 #    description: "View metrics and create custom queries"
 #    icon: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/><circle cx="12" cy="12" r="10"/>'
 #    color: "warning"
 #  
-#  grafana:
-#    enabled: true
+  grafana:
+    enabled: false
 #    url: "http://localhost:30092"  # Your Grafana NodePort URL
 #    label: "Grafana"
 #    description: "Visualize metrics with dashboards"
 #    icon: '<path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>'
 #    color: "info"
 #  
-#  alertmanager:
-#    enabled: true
+  alertmanager:
+    enabled: false
 #    url: "http://localhost:30091"  # Your Alertmanager NodePort URL
 #    label: "Alertmanager"
 #    description: "Manage alerts and notifications"
