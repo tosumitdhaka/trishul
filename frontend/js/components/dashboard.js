@@ -1,5 +1,5 @@
 /* ============================================
-   Dashboard Component - Refactored with Shared Methods
+   Dashboard Component - Refactored with External Links Section
    ============================================ */
 
 class DashboardComponent {
@@ -7,34 +7,51 @@ class DashboardComponent {
         this.recentActivity = [];
         this.initialized = false;
         this.monitoringStatus = null;
+        this.externalLinks = null;
     }
 
     async init() {
         if (this.initialized) return;
         
-        // Check monitoring status
-        await this.checkMonitoringStatus();
+        // Load external links from config (optional)
+        await this.loadExternalLinks();
         
-        this.render();
+        await this.render();
         this.initialized = true;
     }
 
+
     /**
-     * Check if monitoring is available
+     * ✅ NEW: Load external links from config (OPTIONAL)
      */
-    async checkMonitoringStatus() {
+    async loadExternalLinks() {
         try {
-            const response = await fetch('/api/v1/metrics/prometheus/health');
-            this.monitoringStatus = await response.json();
+            const response = await api.getAllSettings();
+            
+            if (response.success && response.settings && response.settings.external_links) {
+                // Filter to only enabled links
+                const enabledLinks = {};
+                Object.entries(response.settings.external_links).forEach(([key, link]) => {
+                    if (link && link.enabled) {
+                        enabledLinks[key] = link;
+                    }
+                });
+                
+                // Only set if we have enabled links
+                if (Object.keys(enabledLinks).length > 0) {
+                    this.externalLinks = enabledLinks;
+                    console.log('✅ Loaded external links:', Object.keys(this.externalLinks));
+                } else {
+                    this.externalLinks = null;
+                    console.log('ℹ️ No enabled external links');
+                }
+            } else {
+                this.externalLinks = null;
+                console.log('ℹ️ No external links configured (standalone deployment)');
+            }
         } catch (error) {
-            console.warn('Failed to check monitoring status:', error);
-            this.monitoringStatus = {
-                available: false,
-                enabled: false,
-                deployment_type: 'Unknown',
-                status: 'error',
-                message: 'Failed to check monitoring status'
-            };
+            console.warn('Failed to load external links:', error);
+            this.externalLinks = null;
         }
     }
 
@@ -43,20 +60,7 @@ class DashboardComponent {
     // ============================================
 
     /**
-     * ✅ NEW: Render a tool card (handles all types)
-     * 
-     * @param {Object} tool - Tool configuration
-     * @param {string} tool.name - Tool name
-     * @param {string} tool.icon - SVG icon path
-     * @param {string} tool.description - Tool description
-     * @param {string} tool.color - Color theme (primary, success, warning, etc.)
-     * @param {string} [tool.view] - Internal view name (for navigation)
-     * @param {string} [tool.tab] - Sub-tab for view
-     * @param {string} [tool.url] - External URL
-     * @param {boolean} [tool.external] - Is external link
-     * @param {boolean} [tool.disabled] - Is disabled (NA)
-     * @param {string} [tool.disabledReason] - Reason for disabled state
-     * @returns {string} HTML string
+     * Render a tool card (handles all types)
      */
     renderToolCard(tool) {
         // Disabled tool (NA)
@@ -140,16 +144,7 @@ class DashboardComponent {
     }
 
     /**
-     * ✅ NEW: Render a quick action button
-     * 
-     * @param {Object} action - Action configuration
-     * @param {string} action.label - Button label
-     * @param {string} action.icon - SVG icon path
-     * @param {string} [action.view] - Internal view name
-     * @param {string} [action.tab] - Sub-tab for view
-     * @param {string} [action.url] - External URL
-     * @param {boolean} [action.external] - Is external link
-     * @returns {string} HTML string
+     * Render a quick action button
      */
     renderQuickActionButton(action) {
         let onClick;
@@ -179,33 +174,6 @@ class DashboardComponent {
         `;
     }
 
-    /**
-     * ✅ NEW: Check if a monitoring tool should be shown
-     * 
-     * @param {string} toolName - Tool name (prometheus, alertmanager, grafana)
-     * @returns {Object} { show: boolean, disabled: boolean, reason: string }
-     */
-    getMonitoringToolStatus(toolName) {
-        if (!this.monitoringStatus) {
-            return { show: false, disabled: false, reason: 'Status unknown' };
-        }
-
-        const available = this.monitoringStatus.available;
-        const enabled = this.monitoringStatus.enabled;
-
-        if (available) {
-            return { show: true, disabled: false, reason: null };
-        } else if (enabled === false) {
-            return { 
-                show: true, 
-                disabled: true, 
-                reason: `Not available in ${this.monitoringStatus.deployment_type} mode` 
-            };
-        } else {
-            return { show: false, disabled: false, reason: 'Not configured' };
-        }
-    }
-
     // ============================================
     // TOOL DEFINITIONS
     // ============================================
@@ -214,7 +182,7 @@ class DashboardComponent {
      * Get FM (Fault Management) tools configuration
      */
     getFMTools() {
-        const tools = [
+        return [
             {
                 name: 'Parser',
                 icon: `<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>`,
@@ -245,30 +213,13 @@ class DashboardComponent {
                 color: 'accent'
             }
         ];
-
-        // ✅ NEW: Add Alertmanager if available (example for future)
-        // const alertmanagerStatus = this.getMonitoringToolStatus('alertmanager');
-        // if (alertmanagerStatus.show) {
-        //     tools.push({
-        //         name: 'Alertmanager',
-        //         icon: `<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>`,
-        //         description: 'Manage alerts and notifications',
-        //         external: true,
-        //         url: '/alertmanager',
-        //         color: 'danger',
-        //         disabled: alertmanagerStatus.disabled,
-        //         disabledReason: alertmanagerStatus.reason
-        //     });
-        // }
-
-        return tools;
     }
 
     /**
      * Get PM (Performance Management) tools configuration
      */
     getPMTools() {
-        const tools = [
+        return [
             {
                 name: 'SNMP Walk',
                 icon: `<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>`,
@@ -284,23 +235,24 @@ class DashboardComponent {
                 color: 'info'
             }
         ];
+    }
 
-        // ✅ Add Prometheus if available
-        const prometheusStatus = this.getMonitoringToolStatus('prometheus');
-        if (prometheusStatus.show) {
-            tools.push({
-                name: 'Prometheus',
-                icon: `<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/><circle cx="12" cy="12" r="10"/>`,
-                description: 'View metrics and create custom queries',
-                external: true,
-                url: 'http://192.168.151.114:30090',
-                color: 'warning',
-                disabled: prometheusStatus.disabled,
-                disabledReason: prometheusStatus.reason
-            });
+    /**
+     * ✅ NEW: Get external links as tool cards
+     */
+    getExternalLinks() {
+        if (!this.externalLinks) {
+            return [];
         }
 
-        return tools;
+        return Object.entries(this.externalLinks).map(([key, link]) => ({
+            name: link.label,
+            icon: link.icon,
+            description: link.description,
+            external: true,
+            url: link.url,
+            color: link.color || 'primary'
+        }));
     }
 
     /**
@@ -336,17 +288,6 @@ class DashboardComponent {
             }
         ];
 
-        // ✅ Add Prometheus if available
-        const prometheusStatus = this.getMonitoringToolStatus('prometheus');
-        if (prometheusStatus.show && !prometheusStatus.disabled) {
-            actions.push({
-                label: 'Prometheus',
-                icon: `<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>`,
-                external: true,
-                url: 'http://192.168.151.114:30090'
-            });
-        }
-
         return actions;
     }
 
@@ -366,13 +307,43 @@ class DashboardComponent {
             .join('');
     }
 
+    /**
+     * ✅ NEW: Render external links section (only if configured)
+     */
+    renderExternalLinks() {
+        const links = this.getExternalLinks();
+        
+        if (links.length === 0) {
+            return ''; // Don't render section if no links
+        }
+
+        return `
+            <div class="dashboard-section">
+                <h3 class="dashboard-section-title">
+                    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                        <polyline points="15 3 21 3 21 9"/>
+                        <line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                    External Links
+                </h3>
+                <div class="dashboard-tools-grid">
+                    ${links.map(link => this.renderToolCard(link)).join('')}
+                </div>
+            </div>
+        `;
+    }
+
     renderQuickActions() {
         return this.getQuickActions()
             .map(action => this.renderQuickActionButton(action))
             .join('');
     }
 
-    render() {
+    /**
+     * ✅ UPDATED: Main render method with External Links section
+     */
+    async render() {
         const container = document.getElementById('dashboardContent');
         if (!container) return;
 
@@ -411,6 +382,9 @@ class DashboardComponent {
                 </div>
             </div>
 
+            <!-- ✅ NEW: External Links Section (only if configured) -->
+            ${this.renderExternalLinks()}
+
             <!-- Quick Actions -->
             <div class="dashboard-section">
                 <h3 class="dashboard-section-title">
@@ -429,7 +403,5 @@ class DashboardComponent {
     }
 }
 
-// Initialize on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-    window.dashboardComponent = new DashboardComponent();
-});
+// Initialize dashboard component
+window.dashboardComponent = new DashboardComponent();

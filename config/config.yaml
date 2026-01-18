@@ -1,6 +1,6 @@
 project:
   name: Trishul
-  version: 2.1.6
+  version: 2.1.8
 
 database:
   host: localhost
@@ -166,3 +166,30 @@ ui:
     - MibTableColumn
     - MibScalar
     - MibIdentifier
+
+# External Links (CNF deployment only)
+# Remove or comment out for standalone deployments
+#external_links:
+#  prometheus:
+#    enabled: true
+#    url: "http://localhost:30090"  # Your Prometheus NodePort URL
+#    label: "Prometheus"
+#    description: "View metrics and create custom queries"
+#    icon: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/><circle cx="12" cy="12" r="10"/>'
+#    color: "warning"
+#  
+#  grafana:
+#    enabled: true
+#    url: "http://localhost:30092"  # Your Grafana NodePort URL
+#    label: "Grafana"
+#    description: "Visualize metrics with dashboards"
+#    icon: '<path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>'
+#    color: "info"
+#  
+#  alertmanager:
+#    enabled: true
+#    url: "http://localhost:30091"  # Your Alertmanager NodePort URL
+#    label: "Alertmanager"
+#    description: "Manage alerts and notifications"
+#    icon: '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'
+#    color: "danger"
